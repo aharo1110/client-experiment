@@ -1,28 +1,29 @@
 {
-    "name": "client-experiment",
-    "version": "1.0.0",
-    "description": "Experimental web applets client for Capstone project",
-    "homepage": "https://github.com/aharo1110/client-experiment#readme",
-    "bugs": {
-        "url": "https://github.com/aharo1110/client-experiment/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/aharo1110/client-experiment.git"
-    },
-    "license": "ISC",
-    "author": "",
-    "type": "commonjs",
-    "main": "index.js",
-    "scripts": {
-        "inspect": "npx @web-applets/inspector .",
-        "dev": "vite",
-        "build": "vite build"
-    },
-    "dependencies": {
-        "@web-applets/sdk": "^0.2.6"
-    },
-    "devDependencies": {
-        "vite": "^5.4.15"
-    }
+  "name": "client-experiment",
+  "version": "1.0.0",
+  "description": "Experimental web applets client for Capstone project",
+  "homepage": "https://github.com/aharo1110/client-experiment#readme",
+  "bugs": {
+    "url": "https://github.com/aharo1110/client-experiment/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aharo1110/client-experiment.git"
+  },
+  "license": "ISC",
+  "author": "aharo1110",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
 }
