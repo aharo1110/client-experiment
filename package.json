@@ -1,0 +1,29 @@
+{
+  "name": "client-experiment",
+  "version": "1.0.0",
+  "description": "Experimental web applets client for Capstone project",
+  "homepage": "https://github.com/aharo1110/client-experiment#readme",
+  "bugs": {
+    "url": "https://github.com/aharo1110/client-experiment/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aharo1110/client-experiment.git"
+  },
+  "license": "ISC",
+  "author": "aharo1110",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
