@@ -4,8 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="/src/applet.js" type="module"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        applet-frame {
+            width: 800px;
+            height: 600px;
+        }
+        .flex-sub {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: fit-content;
+            padding: 20px;
+            gap: 10px;
+        }
+        #options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>This will eventually be a client...</h1>
+    <div class="flex-sub">
+        <h1>Prototype Client</h1>
+        <select id="action-select">
+            <% Object.keys(manifest.actions).forEach(action => { %>
+                <option value="<%= action %>"><%= action %></option>
+            <% }) %>
+        </select>
+        <div id="options-list"></div>
+        <button id="execute-action">Execute Action</button>
+    </div>
+    <applet-frame src="<%= applet_url %>"></applet-frame>
+    <script>
+        add_params = function () {
+            const selectedAction = document.querySelector("#action-select").value;
+            const manifest = <%- JSON.stringify(manifest.actions, null, 2) %>;
+            const params = manifest[selectedAction].params_schema.properties;
+            const container = document.querySelector("#options-list");
+            container.querySelectorAll("label, input").forEach(el => el.remove());
+            Object.keys(params).forEach(param => {
+                const label = document.createElement("label");
+                label.setAttribute("for", `${param}-input`);
+                label.textContent = `${param}:`;
+                const input = document.createElement("input");
+                input.type = "text";
+                input.id = `${param}-input`;
+                input.placeholder = "";
+                container.appendChild(label);
+                container.appendChild(input);
+            });
+        }
+        document.querySelector("#action-select").addEventListener("change", add_params);
+        add_params();
+    </script>
 </body>
 </html>
