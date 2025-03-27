@@ -8,7 +8,15 @@ document.querySelector('#execute-action').addEventListener('click', async () => 
     const action = applet.actions[selected];
     let opts = {}
     Object.keys(action.params_schema.properties).forEach(element => {
-        opts[element] = document.querySelector(`#${element}-input`).value;
+        const paramSchema = action.params_schema.properties[element];
+        const inputValue = document.querySelector(`#${element}-input`).value;
+        if (paramSchema.type === 'number') {
+            opts[element] = parseFloat(inputValue);
+        } else if (paramSchema.type === 'boolean') {
+            opts[element] = inputValue === 'true';
+        } else {
+            opts[element] = inputValue;
+        }
     });
     await applet.sendAction(document.querySelector("#action-select").value, opts);
 });
