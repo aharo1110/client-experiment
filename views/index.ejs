@@ -56,8 +56,12 @@
         add_params = function () {
             const selectedAction = document.querySelector("#action-select").value;
             const manifest = <%- JSON.stringify(manifest.actions, null, 2) %>;
-            const params = manifest[selectedAction].params_schema.properties;
             const container = document.querySelector("#options-list");
+            container.innerHTML = ``;
+            if(manifest[selectedAction].params_schema === undefined) {
+                return;
+            }
+            const params = manifest[selectedAction].params_schema.properties;
             container.querySelectorAll("label, input").forEach(el => el.remove());
             Object.keys(params).forEach(param => {
                 const label = document.createElement("label");
