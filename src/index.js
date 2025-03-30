@@ -1,21 +1,24 @@
 import express from "express";
+import path from "path";
 import { createServer as createViteServer } from "vite";
 
-const app = express();
 const APPLET_URL = "http://localhost:5173";
 
+const app = express();
+const rootdir = new URL("..", import.meta.url).pathname;
+
 app.set("view engine", "ejs");
-app.set("views", new URL("../views", import.meta.url).pathname);
+app.set("views", path.join(rootdir, "views"));
 
 const vite = await createViteServer({
   server: { middlewareMode: true },
-  root: new URL("..", import.meta.url).pathname,
+  root: rootdir,
 });
 
 app.use(vite.middlewares);
 
 if (process.env.NODE_ENV === "production") {
-  app.use("/src", express.static(new URL(import.meta.url).pathname));
+  app.use("/src", express.static(path.join(rootdir, "src")));
 }
 
 app.get("/", async (_req, res) => {

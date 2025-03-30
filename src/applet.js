@@ -10,7 +10,7 @@ document
     const action = applet.actions[selected];
 
     const opts = {};
-    if (action.params_schema) {
+    if (action?.params_schema) {
       const paramSchemas = Object.keys(action.params_schema.properties);
 
       paramSchemas.forEach(([paramName, paramSchema]) => {
@@ -24,6 +24,8 @@ document
           opts[paramName] = inputValue;
         }
       });
+    } else if (!action) {
+      console.error("Encountered missing action schema");
     }
 
     await applet.sendAction(
