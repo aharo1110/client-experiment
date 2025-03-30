@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "production") {
   app.use("/src", express.static(path.join(__dirname)));
 }
 
-app.get("/", async (req, res) => {
+app.get("/", async (_req, res) => {
   try {
     const response = await fetch(`${APPLET_URL}/manifest.json`);
     const manifest = await response.json();

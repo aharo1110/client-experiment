@@ -8,20 +8,24 @@ document
     const applet = await applets.connect(frame.contentWindow);
     const selected = document.querySelector("#action-select").value;
     const action = applet.actions[selected];
-    let opts = {};
+
+    const opts = {};
     if (action.params_schema) {
-      Object.keys(action.params_schema.properties).forEach((element) => {
-        const paramSchema = action.params_schema.properties[element];
-        const inputValue = document.querySelector(`#${element}-input`).value;
+      const paramSchemas = Object.keys(action.params_schema.properties);
+
+      paramSchemas.forEach(([paramName, paramSchema]) => {
+        const inputValue = document.querySelector(`#${paramName}-input`).value;
+
         if (paramSchema.type === "number") {
-          opts[element] = parseFloat(inputValue);
+          opts[paramName] = parseFloat(inputValue);
         } else if (paramSchema.type === "boolean") {
-          opts[element] = inputValue === "true";
+          opts[paramName] = inputValue === "true";
         } else {
-          opts[element] = inputValue;
+          opts[paramName] = inputValue;
         }
       });
     }
+
     await applet.sendAction(
       document.querySelector("#action-select").value,
       opts
