@@ -1,27 +1,24 @@
-const express = require("express");
-const path = require("path");
-const { createServer: createViteServer } = require("vite");
+import express from "express";
+import { createServer as createViteServer } from "vite";
+
 const app = express();
 const APPLET_URL = "http://localhost:5173";
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../views"));
+app.set("views", new URL("../views", import.meta.url).pathname);
 
-async function setupVite() {
-  const vite = await createViteServer({
-    server: { middlewareMode: true },
-    root: path.join(__dirname, ".."),
-  });
+const vite = await createViteServer({
+  server: { middlewareMode: true },
+  root: new URL("..", import.meta.url).pathname,
+});
 
-  app.use(vite.middlewares);
-}
-setupVite();
+app.use(vite.middlewares);
 
 if (process.env.NODE_ENV === "production") {
-  app.use("/src", express.static(path.join(__dirname)));
+  app.use("/src", express.static(new URL(import.meta.url).pathname));
 }
 
-app.get("/", async (req, res) => {
+app.get("/", async (_req, res) => {
   try {
     const response = await fetch(`${APPLET_URL}/manifest.json`);
     const manifest = await response.json();
