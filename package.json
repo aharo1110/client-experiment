@@ -12,7 +12,7 @@
   },
   "license": "ISC",
   "author": "aharo1110",
-  "type": "commonjs",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
