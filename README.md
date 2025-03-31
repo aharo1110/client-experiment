@@ -8,6 +8,4 @@ Make sure a web applet is also running. Just go to the folder where you have one
 *(Side note: this expects your applet to run on port 5173)*
 
 ## Tech Stack
-The tech stack is totally ad-hoc, this is a first prototype to running actions in applets.
-
-It should work to send actions procedurally (that is without an LLM).
+The tech stack is now based on Electron, Vite, and Vue.
