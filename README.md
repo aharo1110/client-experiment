@@ -9,3 +9,10 @@ Make sure a web applet is also running. Just go to the folder where you have one
 
 ## Tech Stack
 The tech stack is now based on Electron, Vite, and Vue.
+
+## Todo List
+
+### Prototype
+- [ ] Build page in new backend
+- [ ] Connect web applet
+- [ ] Send action to applet
