@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover"
+    />
+    <title>Theme</title>
+    <link rel="stylesheet" href="src/ui/common/styles/global.css" />
+    <link rel="stylesheet" href="src/ui/common/styles/markdown.css" />
+    <script type="module" src="src/ui/common/icon.ts"></script>
+    <script type="module" src="src/ui/common/select.ts"></script>
+    <script type="module" src="src/ui/common/input.ts"></script>
+    <script type="module" src="src/ui/common/textarea.ts"></script>
+    <script type="module" src="src/ui/common/checkbox.ts"></script>
+    <script type="module" src="src/ui/common/radio.ts"></script>
+    <script type="module" src="src/ui/common/button.ts"></script>
+    <script type="module" src="src/ui/common/label.ts"></script>
+    <style>
+      body {
+        overflow: auto;
+        background: var(--color-bg-content);
+        padding: var(--space-8);
+        gap: var(--space-8);
+      }
+
+      .form-showcase {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+        max-width: 400px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .form-group h4 {
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+
+      .theme-block {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-8);
+      }
+
+      .button-showcase {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+      }
+
+      .button-group {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .button-group h4 {
+        font-weight: 500;
+        min-width: 200px;
+        margin: 0;
+      }
+
+      .swatch {
+        margin: var(--space-2);
+        font-size: var(--text-xs);
+        display: inline-block;
+        padding: var(--space-5);
+        width: 64px;
+        height: 64px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        transition: all 0.2s ease;
+        border-radius: 50%;
+        /* border: 1px solid var(--color-neutral-1000); */
+      }
+
+      .swatch:not(:first-child) {
+        margin-left: -48px;
+      }
+
+      .swatch:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .theme-block {
+        margin-bottom: var(--space-8);
+      }
+
+      .swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .color-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+        margin-bottom: var(--space-6);
+      }
+
+      .color-group > div {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .color-group h3 {
+        margin-bottom: var(--space-2);
+        border-bottom: 1px solid var(--color-border-default);
+        padding-bottom: var(--space-2);
+      }
+
+      .icon-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: var(--space-3);
+      }
+
+      .icon-name {
+        margin-top: 0.5rem;
+        font-size: 12px;
+      }
+
+      .app-icons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+      }
+    </style>
+  </head>
+  <body class="theme-block">
+    <h1>Theme</h1>
+    <div class="theme-block">
+      <h2>Color Palette</h2>
+      <div id="color-swatches"></div>
+    </div>
+
+    <div class="theme-block">
+      <h2>App Icons</h2>
+      <div class="app-icons">
+        <div class="icon-item">
+          <img
+            src="src/electron/app-icons/client-icon-macOS.png"
+            alt="macOS Icon"
+            width="128"
+            height="128"
+          />
+          <p>macOS Icon (1x)</p>
+        </div>
+        <div class="icon-item">
+          <img
+            src="src/electron/app-icons/client-icon-macOS@2x.png"
+            alt="macOS Icon 2x"
+            width="128"
+            height="128"
+          />
+          <p>macOS Icon (2x)</p>
+        </div>
+        <div class="icon-item">
+          <img
+            src="src/electron/app-icons/client-icon-windows.ico"
+            alt="Windows Icon"
+            width="128"
+            height="128"
+          />
+          <p>Windows Icon</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-block">
+      <h2>Typography</h2>
+      <div>
+        <h3>Sizes</h3>
+        <div style="font-size: var(--text-3xl)">This is 3xl text</div>
+        <div style="font-size: var(--text-xxl)">This is xxl text</div>
+        <div style="font-size: var(--text-xl)">This is xl text</div>
+        <div style="font-size: var(--text-lg)">This is lg text</div>
+        <div style="font-size: var(--text-base)">This is base text</div>
+        <div style="font-size: var(--text-sm)">This is sm text</div>
+        <div style="font-size: var(--text-xs)">This is xs text</div>
+      </div>
+      <div>
+        <h3>Styles</h3>
+        <div style="color: var(--color-text-muted)">
+          Here is some muted text
+        </div>
+      </div>
+      <div data-format="markdown">
+        <h1>This is the main heading of a prose block</h1>
+        <p>
+          This is a lead paragraph that might introduce your content. It could
+          be styled differently than regular paragraphs to create visual
+          hierarchy.
+        </p>
+        <p>
+          A second paragraph will typically follow, because that's just a thing
+          you do when you write. It could have many sentences. It could have
+          just one. That's the thing about writing. You have a lot of options.
+        </p>
+
+        <h2>Secondary Heading</h2>
+        <p>
+          Regular paragraph text with <em>emphasized</em> and
+          <strong>bold</strong> text. You might also need styles for
+          <a href="#">links</a> and <code>inline code</code>.
+        </p>
+
+        <h3>Tertiary Heading</h3>
+        <ul>
+          <li>Unordered list item one</li>
+          <li>List item with <a href="#">a link</a></li>
+          <li>
+            A longer list item that wraps to multiple lines to test line height
+            and spacing
+          </li>
+        </ul>
+
+        <h4>Fourth Level Heading</h4>
+        <ol>
+          <li>Ordered list item one</li>
+          <li>Second ordered list item</li>
+          <li>Third ordered list item</li>
+        </ol>
+
+        <blockquote>
+          <p>
+            This is a blockquote. It might contain a notable quote or callout
+            text that deserves special styling.
+          </p>
+        </blockquote>
+
+        <pre><code>// This is a code block
+function example() {
+return "Hello, World!";
+}</code></pre>
+
+        <h5>Fifth Level Heading</h5>
+        <p>
+          Additional paragraph with <mark>highlighted text</mark> and
+          <small>small text</small> variations. You might also want to style
+          <sub>subscript</sub> and <sup>superscript</sup> text.
+        </p>
+
+        <hr />
+
+        <h6>Sixth Level Heading</h6>
+        <p>
+          Final paragraph with a different type of
+          <kbd>keyboard input</kbd> styling and maybe even
+          <abbr title="Abbreviation">abbr</abbr> elements.
+        </p>
+      </div>
+    </div>
+    <div class="theme-block">
+      <h2>Elements</h2>
+      <div>
+        <a href="#">Link</a>
+      </div>
+      <div>
+        <h3>Labels & Inputs</h3>
+
+        <div class="form-showcase">
+          <div class="form-group">
+            <un-label
+              for="search-input"
+              text="Search Input"
+              size="small"
+              variant="required"
+            ></un-label>
+            <un-input type="search" placeholder="Enter some text"></un-input>
+            <un-input type="search" value="Disabled input" disabled></un-input>
+            <un-label for="text-input" text="Text Input"></un-label>
+            <un-input type="text" placeholder="Enter some text"></un-input>
+            <un-input type="text" value="Disabled input" disabled></un-input>
+          </div>
+
+          <div class="form-group">
+            <un-label
+              for="input-sizes"
+              text="Input Sizes"
+              variant="optional"
+            ></un-label>
+            <un-input
+              type="text"
+              size="small"
+              placeholder="Small input"
+            ></un-input>
+            <un-input
+              type="text"
+              placeholder="Medium input (default)"
+            ></un-input>
+            <un-input
+              type="text"
+              size="large"
+              placeholder="Large input"
+            ></un-input>
+          </div>
+
+          <div class="form-group">
+            <un-label for="input-variants" text="Input Variants"></un-label>
+            <un-input type="text" placeholder="Default variant"></un-input>
+            <un-input
+              type="text"
+              variant="ghost"
+              placeholder="Ghost variant"
+            ></un-input>
+            <un-input
+              type="text"
+              variant="flat"
+              placeholder="Flat variant"
+            ></un-input>
+          </div>
+
+          <div class="form-group">
+            <h4>Combined Size & Variant</h4>
+            <un-input
+              type="text"
+              size="small"
+              variant="ghost"
+              placeholder="Small ghost input"
+            ></un-input>
+            <un-input
+              type="text"
+              size="medium"
+              variant="flat"
+              placeholder="Medium flat input"
+            ></un-input>
+            <un-input
+              type="text"
+              size="large"
+              variant="ghost"
+              placeholder="Large ghost input"
+            ></un-input>
+          </div>
+
+          <div class="form-group">
+            <h4>Select</h4>
+            <un-select placeholder="Choose an option">
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3" disabled>Option 3 (disabled)</option>
+            </un-select>
+            <un-select disabled>
+              <option value="1">Disabled select</option>
+            </un-select>
+            <un-select loading>
+              <option value="1">Loading select</option>
+              <option value="2">Option 2</option>
+            </un-select>
+
+            <h5>With Icons</h5>
+            <un-select icon="search" placeholder="Search options">
+              <option value="1">Search option 1</option>
+              <option value="2">Search option 2</option>
+            </un-select>
+            <un-select
+              icon="history"
+              icon-position="start"
+              placeholder="History options"
+            >
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+            </un-select>
+
+            <h5>Variants</h5>
+            <un-select variant="ghost" placeholder="Ghost variant">
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+            </un-select>
+            <un-select variant="flat" placeholder="Flat variant">
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+            </un-select>
+
+            <h5>Combined Variants with Icons</h5>
+            <un-select
+              variant="ghost"
+              icon="settings"
+              placeholder="Ghost with icon"
+            >
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+            </un-select>
+            <un-select
+              variant="flat"
+              icon="history"
+              icon-position="start"
+              placeholder="Flat with icon"
+            >
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+            </un-select>
+          </div>
+
+          <div class="form-group">
+            <h4>Textarea</h4>
+            <un-textarea
+              placeholder="Enter multiple lines of text"
+              rows="3"
+            ></un-textarea>
+            <un-textarea value="Disabled textarea" disabled></un-textarea>
+          </div>
+
+          <div class="form-group">
+            <h4>Checkbox</h4>
+            <un-checkbox label="Unchecked checkbox"></un-checkbox>
+            <un-checkbox label="Checked checkbox" checked></un-checkbox>
+            <un-checkbox label="Disabled checkbox" disabled></un-checkbox>
+          </div>
+
+          <div class="form-group">
+            <h4>Radio</h4>
+            <un-radio-group value="1">
+              <un-radio
+                name="radio-demo"
+                value="1"
+                label="Option 1"
+                checked
+              ></un-radio>
+              <un-radio name="radio-demo" value="2" label="Option 2"></un-radio>
+              <un-radio
+                name="radio-demo"
+                value="3"
+                label="Option 3 (disabled)"
+                disabled
+              ></un-radio>
+            </un-radio-group>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="theme-block">
+      <h2>Buttons</h2>
+      <h3>Button Types</h3>
+      <div class="button-showcase">
+        <div class="button-group">
+          <h4>Primary</h4>
+          <un-button type="primary" text="Primary Button"></un-button>
+          <un-button type="primary" text="Disabled" disabled="true"></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Secondary</h4>
+          <un-button type="secondary" text="Secondary Button"></un-button>
+          <un-button
+            type="secondary"
+            text="Disabled"
+            disabled="true"
+          ></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Negative</h4>
+          <un-button type="negative" text="Negative Button"></un-button>
+          <un-button
+            type="negative"
+            text="Disabled"
+            disabled="true"
+          ></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Outline</h4>
+          <un-button type="outline" text="Outline Button"></un-button>
+          <un-button type="outline" text="Disabled" disabled="true"></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Ghost</h4>
+          <un-button type="ghost" text="Ghost Button"></un-button>
+          <un-button type="ghost" text="Disabled" disabled="true"></un-button>
+        </div>
+      </div>
+
+      <h3>Button Sizes</h3>
+      <div class="button-showcase">
+        <div class="button-group">
+          <h4>Small</h4>
+          <un-button
+            type="primary"
+            size="small"
+            text="Small Button"
+          ></un-button>
+          <un-button
+            type="secondary"
+            size="small"
+            text="Small Button"
+          ></un-button>
+          <un-button
+            type="outline"
+            size="small"
+            text="Small Button"
+          ></un-button>
+          <un-button type="ghost" size="small" text="Small Button"></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Medium</h4>
+          <un-button type="primary" text="Medium Button"></un-button>
+          <un-button type="secondary" text="Medium Button"></un-button>
+          <un-button type="outline" text="Medium Button"></un-button>
+          <un-button type="ghost" text="Medium Button"></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Large</h4>
+          <un-button
+            type="primary"
+            size="large"
+            text="Large Button"
+          ></un-button>
+          <un-button
+            type="secondary"
+            size="large"
+            text="Large Button"
+          ></un-button>
+          <un-button
+            type="outline"
+            size="large"
+            text="Large Button"
+          ></un-button>
+          <un-button type="ghost" size="large" text="Large Button"></un-button>
+        </div>
+      </div>
+
+      <h3>Loading State</h3>
+      <div class="button-showcase">
+        <div class="button-group">
+          <h4>Loading</h4>
+          <un-button type="primary" text="Loading" loading></un-button>
+          <un-button type="secondary" text="Loading" loading></un-button>
+          <un-button type="negative" text="Loading" loading></un-button>
+          <un-button type="outline" text="Loading" loading></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Sizes</h4>
+          <un-button
+            type="primary"
+            size="small"
+            text="Small"
+            loading
+          ></un-button>
+          <un-button type="primary" text="Medium" loading></un-button>
+          <un-button
+            type="primary"
+            size="large"
+            text="Large"
+            loading
+          ></un-button>
+        </div>
+      </div>
+
+      <h3>Buttons with Icons</h3>
+      <div class="button-showcase">
+        <div class="button-group">
+          <h4>Icon Start</h4>
+          <un-button type="primary" text="Add" icon="plus"></un-button>
+          <un-button type="secondary" text="Search" icon="search"></un-button>
+          <un-button type="outline" text="Settings" icon="settings"></un-button>
+          <un-button type="ghost" text="Delete" icon="delete"></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Icon End</h4>
+          <un-button
+            type="primary"
+            text="Next"
+            icon="right"
+            icon-position="end"
+          ></un-button>
+          <un-button
+            type="secondary"
+            text="Download"
+            icon="download"
+            icon-position="end"
+          ></un-button>
+          <un-button
+            type="outline"
+            text="External"
+            icon="external"
+            icon-position="end"
+          ></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Sizes with Icons</h4>
+          <un-button
+            type="primary"
+            text="Small"
+            size="small"
+            icon="plus"
+          ></un-button>
+          <un-button type="primary" text="Medium" icon="plus"></un-button>
+          <un-button
+            type="primary"
+            text="Large"
+            size="large"
+            icon="plus"
+          ></un-button>
+        </div>
+        <div class="button-group">
+          <h4>Loading with Icons</h4>
+          <un-button
+            type="primary"
+            text="Loading"
+            icon="refresh"
+            loading
+          ></un-button>
+          <un-button
+            type="secondary"
+            text="Loading"
+            icon="upload"
+            loading
+          ></un-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-block">
+      <h2>Common Icons</h2>
+      <div class="icon-grid" id="icon-grid">
+        <!-- Icons will be dynamically generated here -->
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Get all CSS variables from the document
+        const colorGroups = {
+          'Brand Colors': {
+            Neutral: /^--color-neutral-/,
+            Action: /^--color-action-/,
+            Reaction: /^--color-reaction-/,
+          },
+          'Utility Colors': {
+            Success: /^--color-success-/,
+            Error: /^--color-error-/,
+            Highlight: /^--color-highlight-/,
+          },
+          'UI Color Aliases': {
+            Text: /^--color-text-/,
+            Background: /^--color-bg-/,
+            Border: /^--color-border-/,
+          },
+        };
+
+        const colorSwatchesContainer =
+          document.getElementById('color-swatches');
+
+        // Get all computed styles
+        const styles = getComputedStyle(document.documentElement);
+        const cssVars = Array.from(document.styleSheets)
+          .filter((sheet) => {
+            try {
+              // Filter out cross-origin stylesheets
+              return (
+                sheet.href === null ||
+                sheet.href.startsWith(window.location.origin)
+              );
+            } catch (e) {
+              return false;
+            }
+          })
+          .reduce((acc, sheet) => {
+            try {
+              // Get all CSS rules that contain variable declarations
+              const rules = Array.from(sheet.cssRules || []);
+              rules.forEach((rule) => {
+                if (rule.style) {
+                  for (let i = 0; i < rule.style.length; i++) {
+                    const prop = rule.style[i];
+                    if (prop.startsWith('--color-')) {
+                      acc.push(prop);
+                    }
+                  }
+                }
+              });
+            } catch (e) {
+              console.error('Error accessing CSS rules:', e);
+            }
+            return acc;
+          }, []);
+
+        // Remove duplicates
+        const uniqueVars = [...new Set(cssVars)];
+
+        // Create swatches for each group
+        for (const [groupName, colorTypes] of Object.entries(colorGroups)) {
+          const groupDiv = document.createElement('div');
+          groupDiv.className = 'color-group';
+          groupDiv.innerHTML = `<h3>${groupName}</h3>`;
+
+          let hasColors = false;
+
+          for (const [typeName, regex] of Object.entries(colorTypes)) {
+            const typeDiv = document.createElement('div');
+            typeDiv.innerHTML = `<h4>${typeName}</h4>`;
+
+            const swatchesDiv = document.createElement('div');
+            swatchesDiv.className = 'swatches';
+
+            const matchingVars = uniqueVars.filter((v) => regex.test(v));
+
+            // Sort variables numerically if they end with numbers
+            matchingVars.sort((a, b) => {
+              const aMatch = a.match(/(\d+)$/);
+              const bMatch = b.match(/(\d+)$/);
+
+              if (aMatch && bMatch) {
+                return parseInt(aMatch[1]) - parseInt(bMatch[1]);
+              }
+              return a.localeCompare(b);
+            });
+
+            if (matchingVars.length > 0) {
+              hasColors = true;
+
+              matchingVars.forEach((varName) => {
+                const value = styles.getPropertyValue(varName).trim();
+
+                // Skip if the value is empty or references another var
+                if (!value || value.includes('var(--')) {
+                  return;
+                }
+
+                const swatch = document.createElement('div');
+                swatch.className = 'swatch';
+                swatch.style.backgroundColor = `var(${varName})`;
+                swatchesDiv.appendChild(swatch);
+              });
+
+              typeDiv.appendChild(swatchesDiv);
+              groupDiv.appendChild(typeDiv);
+            }
+          }
+
+          if (hasColors) {
+            colorSwatchesContainer.appendChild(groupDiv);
+          }
+        }
+      });
+    </script>
+    <script type="module">
+      import { ICON } from './src/ui/common/icon.ts';
+
+      // Function to generate icon grid
+      function generateIconGrid() {
+        const iconGrid = document.getElementById('icon-grid');
+
+        // Build HTML for all icons from ICON
+        let iconsHtml = Object.entries(ICON)
+          .map(
+            ([key, value]) => `
+          <div class="icon-item" title="${key}${key !== value ? ` (${value})` : ''}">
+            <un-icon name="${key}"></un-icon>
+          </div>
+        `
+          )
+          .join('');
+
+        // Set the HTML content
+        iconGrid.innerHTML = iconsHtml;
+      }
+
+      // Generate the icon grid when the DOM is loaded
+      document.addEventListener('DOMContentLoaded', generateIconGrid);
+      if (
+        document.readyState === 'complete' ||
+        document.readyState === 'interactive'
+      ) {
+        setTimeout(generateIconGrid, 1);
+      }
+    </script>
+  </body>
+</html>
