@@ -1,6 +1,5 @@
-# Operator
-
-An experimental client for the web from [Unternet](https://unternet.co).
+# client-experiment
+Experimental web applets client for Capstone project. Now based off of Unternet's client.
 
 ## Setup
 
@@ -26,9 +25,3 @@ Once installed use this to download the qwen2.5-coder:3b model which is the defa
 ```bash
 ollama run qwen2.5-coder:3b
 ```
-
-## Builds
-
-### Windows
-
-Windows builds are currently unsigned. Signing can be enabled by adding `windows-certs.pfx` and setting the `WINDOWS_CERTS_PASSWORD` secret in GitHub Actions and updating the `certificateFile` and `certificatePassword` fields in `package.json` under the `"win"` section.

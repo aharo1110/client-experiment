@@ -1,11 +1,4 @@
 {
-  "name": "@unternet/client",
-  "version": "0.3.4",
-  "description": "Unternet Client",
-  "author": {
-    "name": "Rupert Manfredi",
-    "email": "rupert@unternet.co"
-  },
   "workspaces": [
     "kernel",
     "desktop"
@@ -61,27 +54,14 @@
     "build": "npm run build:kernel && npm run build:desktop",
     "build:desktop": "cd desktop && rimraf dist && cross-env NODE_ENV=production npm run build",
     "build:kernel": "cd kernel && npm run build",
-    "clean": "rimraf desktop/dist && rimraf kernel/dist && rm -rf dist",
     "dev": "npm run dev:desktop",
-    "dev:desktop": "cd desktop && npm run dev",
-    "package": "npm run package:desktop",
-    "package:desktop": "cd desktop && npm run package",
-    "package:electron": "npm run package:all",
-    "package:all": "electron-builder -mwl",
-    "package:mac": "electron-builder --mac",
-    "package:win": "electron-builder --win",
-    "package:linux": "electron-builder --linux",
-    "app:dir": "rm -rf dist && electron-builder --dir",
-    "app:dist": "rm -rf dist && electron-builder",
-    "sync-version": "cd desktop && npm version $npm_package_version && cd ../kernel && npm version $npm_package_version",
-    "prepare": "husky"
+    "dev:desktop": "cd desktop && npm run dev"
   },
   "devDependencies": {
     "@electron/notarize": "^3.0.1",
     "concurrently": "^9.1.2",
     "cross-env": "^7.0.3",
     "electron-builder": "^26.0.12",
-    "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
