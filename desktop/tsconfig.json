@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "ES2020", // Use a modern target
     "module": "ESNext", // Use ESNext for interoperability
     "moduleResolution": "node", // Node-compatible module resolution

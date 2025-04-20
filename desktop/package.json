@@ -1,22 +1,20 @@
 {
-  "name": "@unternet/client-desktop",
-  "version": "0.3.4",
-  "homepage": "https://unternet.co",
-  "license": "ISC",
+  "name": "magic-test-app",
+  "version": "0.1.0",
+  "private": true,
   "main": "dist/electron/main.js",
   "scripts": {
-    "build": "npm run build:notarize && vite build && npm run build:electron && npm run build:icons",
-    "build:notarize": "tsc -p tsconfig.notarize.json",
-    "build:icons": "shx mkdir -p dist/electron/app-icons && shx cp -r src/electron/app-icons/* dist/electron/app-icons/ && shx cp src/electron/app-icons/linux/512x512.png dist/electron/app-icons/client-icon-linux.png",
+    "build": "npm run build:web && npm run build:electron",
     "build:web": "vite build",
-    "build:electron": "tsc --project tsconfig.node.json",
-    "dev": "concurrently 'npm run dev:web' 'npm run dev:electron' ",
-    "dev:electron": "npm run build:electron && electron .",
-    "dev:web": "vite"
+    "build:electron": "tsc --project tsconfig.node.json && shx mkdir -p dist/electron && shx cp -r src/electron/* dist/electron/",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:electron\"",
+    "dev:web": "vite",
+    "dev:electron": "electron ."
   },
   "dependencies": {
     "@unternet/kernel": "*",
     "@unternet/sdk": "^0.1.1",
+    "@vitejs/plugin-react": "^4.4.1",
     "@web-applets/sdk": "^0.2.6",
     "dexie": "^4.0.11",
     "electron-is-dev": "^3.0.1",
@@ -27,6 +25,9 @@
     "lucide": "^0.484.0",
     "marked": "^15.0.7",
     "openai": "^4.91.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-scripts": "5.0.1",
     "ulid": "^2.4.0"
   },
   "devDependencies": {
