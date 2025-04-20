@@ -3,8 +3,16 @@ Experimental web applets client for Capstone project. Now based off of Unternet'
 
 ## Setup
 
-# DON'T RUN YET!
-### This hasn't been fully refactored yet.
+For now as this gets developed, do the following
+
+1. Go into the `desktop` folder: `cd desktop`
+2. Run `npm install`
+3. Run `npm run build` and `npm run dev`
+
+> [!IMPORTANT]
+> The kernel is not integrated yet, is not yet in a state where it runs applets on stable, so it's not to be used or looked at until later.
+
+### Existing Client Instructions
 
 - Run `npm install`
 - Copy `.env.example` to `.env` and fill in the required environment variables
