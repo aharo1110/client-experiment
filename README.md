@@ -11,8 +11,6 @@ For now as this gets developed, do the following
 
 > [!IMPORTANT]
 > The kernel is not integrated yet, is not yet in a state where it runs applets on stable, so it's not to be used or looked at until later.
-> [!NOTE]
-> The old code for the first prototype client which used the Applets SDK can be found in the `basics` branch.
 
 ### Existing Client Instructions
 
