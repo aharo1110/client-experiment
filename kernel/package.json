@@ -1,9 +1,4 @@
 {
-  "name": "@unternet/kernel",
-  "version": "0.3.4",
-  "description": "",
-  "license": "ISC",
-  "author": "",
   "type": "module",
   "main": "dist/index.js",
   "directories": {

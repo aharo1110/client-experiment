@@ -1,5 +1,4 @@
 import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
 import readline from 'readline';
 import chalk from 'chalk';
 import 'dotenv/config';
@@ -20,8 +19,7 @@ import resources from './resources';
 
 /* MODEL & KERNEL SETUP */
 
-const model = openai('gpt-4o');
-// const model = anthropic('claude-3-7-sonnet-20250219');
+const model = openai('gpt-4o-mini');
 const interpreter = new Interpreter({
   model,
   resources,
