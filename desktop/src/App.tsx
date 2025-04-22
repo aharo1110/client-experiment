@@ -2,10 +2,11 @@ import React from 'react';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 
 import 'react-mosaic-component/react-mosaic-component.css';
+import 'react-mosaic-component/styles/index.less';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 
-import './App.css';
+import './App.less';
 
 export type ViewId = 'a' | 'b' | 'c' | 'new';
 
@@ -24,6 +25,8 @@ function App() {
           <h1>{TITLE_MAP[id]}</h1>
         </MosaicWindow>
       )}
+      className={"mosaic-blueprint-theme"}
+      blueprintNamespace="bp5"
       initialValue={{
         direction: 'row',
         first: 'a',
