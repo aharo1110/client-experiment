@@ -1,0 +1,36 @@
+{
+  "type": "module",
+  "main": "dist/index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "chokidar 'src/**/*' -c 'npm run build'",
+    "docs": "typedoc",
+    "example": "cd example && npx tsx src/index.ts",
+    "test": "vitest --root tests --watch=false",
+    "test:dev": "vitest --root tests --watch"
+  },
+  "imports": {
+    "#src/*": "./src/*",
+    "#tests/tooling": "./tests/common/tooling.ts",
+    "#tests/*": "./tests/*"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.0.10",
+    "@web-applets/sdk": "^0.1.5",
+    "ai": "^4.0.20",
+    "dedent": "^1.5.3",
+    "ollama-ai-provider": "^1.2.0",
+    "openai": "^4.76.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "mime-types": "^3.0.1",
+    "typedoc": "^0.28.2",
+    "typescript": "^5.8.2",
+    "vitest": "^3.1.1"
+  }
+}

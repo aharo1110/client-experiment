@@ -1,0 +1,43 @@
+{
+  "name": "magic-test-app",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/electron/main.js",
+  "scripts": {
+    "build": "npm run build:web && npm run build:electron",
+    "build:web": "vite build",
+    "build:electron": "tsc --project tsconfig.node.json && shx mkdir -p dist/electron && shx cp -r src/electron/* dist/electron/",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:electron\"",
+    "dev:web": "vite",
+    "dev:electron": "electron ."
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^5.18.0",
+    "@blueprintjs/icons": "^5.21.0",
+    "@unternet/kernel": "*",
+    "@unternet/sdk": "^0.1.1",
+    "@vitejs/plugin-react": "^4.4.1",
+    "@web-applets/sdk": "^0.2.6",
+    "dexie": "^4.0.11",
+    "electron-is-dev": "^3.0.1",
+    "electron-log": "^5.0.0-beta.16",
+    "electron-updater": "^6.6.2",
+    "immer": "^10.1.1",
+    "lit": "^3.2.1",
+    "lucide": "^0.484.0",
+    "marked": "^15.0.7",
+    "openai": "^4.91.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-mosaic-component": "^6.1.1",
+    "react-scripts": "5.0.1",
+    "ulid": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "concurrently": "^9.1.2",
+    "dotenv": "^16.4.7",
+    "electron": "^35.0.1",
+    "vite": "^6.2.2"
+  }
+}

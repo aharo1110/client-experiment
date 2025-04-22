@@ -1,13 +1,38 @@
 # client-experiment
-Experimental web applets client for Capstone project
+Experimental web applets client for Capstone project. Now based off of Unternet's client.
 
-## Instructions
-Just run `npm install` and then `npm run dev`.
+## Setup
 
-Make sure a web applet is also running. Just go to the folder where you have one and type `npm run dev` there.    
-*(Side note: this expects your applet to run on port 5173)*
+For now as this gets developed, do the following
 
-## Tech Stack
-The tech stack is totally ad-hoc, this is a first prototype to running actions in applets.
+1. Go into the `desktop` folder: `cd desktop`
+2. Run `npm install`
+3. Run `npm run build` and `npm run dev`
 
-It should work to send actions procedurally (that is without an LLM).
+> [!IMPORTANT]
+> The kernel is not integrated yet, is not yet in a state where it runs applets on stable, so it's not to be used or looked at until later.
+
+### Existing Client Instructions
+
+- Run `npm install`
+- Copy `.env.example` to `.env` and fill in the required environment variables
+- Start the native client with `npm run dev`
+
+## Local Models
+
+Operator has support for running LLM inference locally using [Ollama](https://ollama.com/).
+By default, this will be used if no Vite OpenAI API key has been provided as an environment variable.
+
+To set this up on Linux use this to download and install Ollama:
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+Or download the binary from [their webisite](https://ollama.com/download).
+
+Once installed use this to download the qwen2.5-coder:3b model which is the default.
+
+```bash
+ollama run qwen2.5-coder:3b
+```
