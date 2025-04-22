@@ -19,6 +19,8 @@ const TITLE_MAP: Record<ViewId, string> = {
 };
 
 function App() {
+
+  // Strong resizing
   useEffect(() => {
     const handleResizeStart = () => {
       document.querySelectorAll('webview').forEach((webview) => {
@@ -45,6 +47,7 @@ function App() {
     <Mosaic<ViewId>
       renderTile={(id, path) => (
         <MosaicWindow<ViewId> path={path} createNode={() => 'new'} title={TITLE_MAP[id]}>
+          {/* This is a placeholder for the eventual webview based model we will use */}
           <webview id={id} src={TITLE_MAP[id]}></webview>
         </MosaicWindow>
       )}
