@@ -16,7 +16,7 @@ function createWindow() {
   /* Create the browser window. */
 
   const win = new BrowserWindow({
-    width: 770,
+    width: 1000,
     height: 790,
     // transparent: true,
     // vibrancy: 'under-window',
