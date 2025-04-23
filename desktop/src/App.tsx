@@ -1,39 +1,37 @@
-import React from 'react';
-import { Mosaic, MosaicWindow } from 'react-mosaic-component';
+import React, { useEffect, useRef } from 'react';
 
-import 'react-mosaic-component/react-mosaic-component.css';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import 'react-mosaic-component/react-mosaic-component.css';
 
 import './App.css';
-
-export type ViewId = 'a' | 'b' | 'c' | 'new';
-
-const TITLE_MAP: Record<ViewId, string> = {
-  a: 'Left Window',
-  b: 'Top Right Window',
-  c: 'Bottom Right Window',
-  new: 'New Window',
-};
+import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 
 function App() {
+  const windowManagerRef = useRef<WindowManagerHandle>(null);
+  const needsInitRef = useRef(true);
+
+  useEffect(() => {
+    if (!needsInitRef.current || !windowManagerRef.current) {
+      return;
+    }
+
+    windowManagerRef.current.addWindow('Window 1', <h1>Window 1</h1>);
+    windowManagerRef.current.addWindow('Window 2', <h1>Window 2</h1>);
+    needsInitRef.current = false;
+  }, [windowManagerRef, needsInitRef]);
+
   return (
-    <Mosaic<ViewId>
-      renderTile={(id, path) => (
-        <MosaicWindow<ViewId> path={path} createNode={() => 'new'} title={TITLE_MAP[id]}>
-          <h1>{TITLE_MAP[id]}</h1>
-        </MosaicWindow>
-      )}
-      initialValue={{
-        direction: 'row',
-        first: 'a',
-        second: {
-          direction: 'column',
-          first: 'b',
-          second: 'c',
-        },
-      }}
-    />
+    <>
+      <button
+        onClick={() =>
+          windowManagerRef.current.addWindow('New Window', <h1>Some Stuff</h1>)
+        }
+      >
+        Add window
+      </button>
+      <WindowManager ref={windowManagerRef} />;
+    </>
   );
 }
 
