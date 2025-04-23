@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
+import { Mosaic, MosaicWindow, ExpandButton, RemoveButton, SplitButton } from 'react-mosaic-component';
 
+import 'react-mosaic-component/react-mosaic-component.css';
+import 'react-mosaic-component/styles/index.less';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-import 'react-mosaic-component/react-mosaic-component.css';
-
-import './App.css';
+import './App.less';
 import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 
 function App() {
@@ -21,6 +22,29 @@ function App() {
     needsInit.current = false;
   }, [windowManager, needsInit]);
 
+  // Strong resizing
+  useEffect(() => {
+    const handleResizeStart = () => {
+      document.querySelectorAll('webview').forEach((webview) => {
+        webview.classList.add('disable-pointer-events');
+      });
+    };
+
+    const handleResizeEnd = () => {
+      document.querySelectorAll('webview').forEach((webview) => {
+        webview.classList.remove('disable-pointer-events');
+      });
+    };
+
+    window.addEventListener('mousedown', handleResizeStart);
+    window.addEventListener('mouseup', handleResizeEnd);
+
+    return () => {
+      window.removeEventListener('mousedown', handleResizeStart);
+      window.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, []);
+      
   return (
     <>
       <button

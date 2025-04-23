@@ -8,20 +8,27 @@ export default defineConfig({
   base: isDev ? '/' : './',
   envDir: path.resolve(__dirname, '..'),
   envPrefix: 'APP_',
-  plugins: [react()], // Add React plugin for Vite
+  plugins: [react()],
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
+  },
   build: {
-    outDir: 'dist/www', // Output directory for the web build
+    outDir: 'dist/www',
     rollupOptions: {
-      external: ['electron'], // Exclude Electron from the web build
+      external: ['electron'],
     },
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // Optional: Alias for cleaner imports
+      '@': path.resolve(__dirname, 'src'),
     },
   },
   server: {
-    port: 5173, // Development server port
-    strictPort: true, // Fail if the port is already in use
+    port: 5173,
+    strictPort: true,
   },
 });
