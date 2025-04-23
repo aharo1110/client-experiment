@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Mosaic, MosaicWindow, ExpandButton, RemoveButton, SplitButton } from 'react-mosaic-component';
+import { Button } from '@blueprintjs/core';
 
 import 'react-mosaic-component/react-mosaic-component.css';
 import 'react-mosaic-component/styles/index.less';
@@ -47,13 +47,11 @@ function App() {
       
   return (
     <>
-      <button
+      <div className="app-header bp5-dark"><Button
         onClick={() =>
           windowManager.current.addWindow('New Window', <h1>Some Stuff</h1>)
         }
-      >
-        Add window
-      </button>
+      text="Add window" /></div>
       <WindowManager ref={windowManager} />
     </>
   );
