@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Mosaic, MosaicWindow } from 'react-mosaic-component';
+import { Mosaic, MosaicWindow, ExpandButton, RemoveButton, SplitButton } from 'react-mosaic-component';
 
 import 'react-mosaic-component/react-mosaic-component.css';
 import 'react-mosaic-component/styles/index.less';
@@ -46,7 +46,11 @@ function App() {
   return (
     <Mosaic<ViewId>
       renderTile={(id, path) => (
-        <MosaicWindow<ViewId> path={path} createNode={() => 'new'} title={TITLE_MAP[id]}>
+        <MosaicWindow<ViewId>
+         path={path}
+         createNode={() => 'new'}
+         title={TITLE_MAP[id]}
+         toolbarControls= {[<SplitButton />, <ExpandButton />, <RemoveButton />]}>
           {/* This is a placeholder for the eventual webview based model we will use */}
           <webview id={id} src={TITLE_MAP[id]}></webview>
         </MosaicWindow>
