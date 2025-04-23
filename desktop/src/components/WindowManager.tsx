@@ -27,18 +27,20 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   const [windows, setWindows] = useState<Record<number, WindowData>>({});
   const [layout, setLayout] = useState<MosaicNode<number> | null>(null);
 
-  const addWindow = useCallback((title: string, content: ReactNode) => {
-    setWindows((prev) => {
-      const newId = Object.keys(prev).length + 1;
-      const newWindows = { ...prev, [newId]: { id: newId, title, content } };
-      const newLayout = createBalancedTreeFromLeaves(
-        Object.keys(newWindows).map(Number)
-      );
+  const addWindow = useCallback(
+    (title: string, content: ReactNode) =>
+      setWindows((prev) => {
+        const newId = Object.keys(prev).length + 1;
+        const newWindows = { ...prev, [newId]: { id: newId, title, content } };
+        const newLayout = createBalancedTreeFromLeaves(
+          Object.keys(newWindows).map(Number)
+        );
 
-      setLayout(newLayout);
-      return newWindows;
-    });
-  }, []);
+        setLayout(newLayout);
+        return newWindows;
+      }),
+    []
+  );
 
   useImperativeHandle(ref, () => ({
     addWindow,
