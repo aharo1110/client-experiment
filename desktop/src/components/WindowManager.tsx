@@ -18,20 +18,22 @@ export type WindowManagerHandle = {
 };
 
 type WindowData = {
-  id: string;
+  id: number;
   title: string;
   content: ReactNode;
 };
 
 export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
-  const [windows, setWindows] = useState<Record<string, WindowData>>({});
-  const [layout, setLayout] = useState<MosaicNode<string> | null>(null);
+  const [windows, setWindows] = useState<Record<number, WindowData>>({});
+  const [layout, setLayout] = useState<MosaicNode<number> | null>(null);
 
   const addWindow = useCallback((title: string, content: ReactNode) => {
     setWindows((prev) => {
-      const newId = `window-${Object.keys(prev).length + 1}`;
+      const newId = Object.keys(prev).length + 1;
       const newWindows = { ...prev, [newId]: { id: newId, title, content } };
-      const newLayout = createBalancedTreeFromLeaves(Object.keys(newWindows));
+      const newLayout = createBalancedTreeFromLeaves(
+        Object.keys(newWindows).map(Number)
+      );
 
       setLayout(newLayout);
       return newWindows;
@@ -47,17 +49,17 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   }
 
   return (
-    <Mosaic<string>
+    <Mosaic<number>
       renderTile={(id, path) => (
-        <MosaicWindow<string>
+        <MosaicWindow<number>
           title={windows[id].title}
           path={path}
-          createNode={() => ''}
+          // createNode={() => 0}
         >
           <>{windows[id].content}</>
         </MosaicWindow>
       )}
-      className={"mosaic-blueprint-theme"}
+      className={'mosaic-blueprint-theme'}
       blueprintNamespace="bp5"
       value={layout}
       onChange={setLayout}
