@@ -57,6 +57,8 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
           <>{windows[id].content}</>
         </MosaicWindow>
       )}
+      className={"mosaic-blueprint-theme"}
+      blueprintNamespace="bp5"
       value={layout}
       onChange={setLayout}
     />
