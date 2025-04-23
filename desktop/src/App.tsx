@@ -8,29 +8,29 @@ import './App.css';
 import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 
 function App() {
-  const windowManagerRef = useRef<WindowManagerHandle>(null);
-  const needsInitRef = useRef(true);
+  const windowManager = useRef<WindowManagerHandle>(null);
+  const needsInit = useRef(true);
 
   useEffect(() => {
-    if (!needsInitRef.current || !windowManagerRef.current) {
+    if (!needsInit.current || !windowManager.current) {
       return;
     }
 
-    windowManagerRef.current.addWindow('Window 1', <h1>Window 1</h1>);
-    windowManagerRef.current.addWindow('Window 2', <h1>Window 2</h1>);
-    needsInitRef.current = false;
-  }, [windowManagerRef, needsInitRef]);
+    // Spawn initial window
+    windowManager.current.addWindow('Window 1', <h1>Window 1</h1>);
+    needsInit.current = false;
+  }, [windowManager, needsInit]);
 
   return (
     <>
       <button
         onClick={() =>
-          windowManagerRef.current.addWindow('New Window', <h1>Some Stuff</h1>)
+          windowManager.current.addWindow('New Window', <h1>Some Stuff</h1>)
         }
       >
         Add window
       </button>
-      <WindowManager ref={windowManagerRef} />;
+      <WindowManager ref={windowManager} />
     </>
   );
 }

@@ -31,9 +31,7 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
     setWindows((prev) => {
       const newId = `window-${Object.keys(prev).length + 1}`;
       const newWindows = { ...prev, [newId]: { id: newId, title, content } };
-
-      const leafKeys = Object.keys(newWindows);
-      const newLayout = createBalancedTreeFromLeaves(leafKeys);
+      const newLayout = createBalancedTreeFromLeaves(Object.keys(newWindows));
 
       setLayout(newLayout);
       return newWindows;
@@ -44,7 +42,11 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
     addWindow,
   }));
 
-  return layout ? (
+  if (!layout) {
+    return <h1>Empty</h1>;
+  }
+
+  return (
     <Mosaic<string>
       renderTile={(id, path) => (
         <MosaicWindow<string>
@@ -58,7 +60,5 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
       value={layout}
       onChange={setLayout}
     />
-  ) : (
-    <div style={{ height: '100%', width: '100%' }} />
   );
 });
