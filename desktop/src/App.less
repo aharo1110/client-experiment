@@ -10,6 +10,11 @@ body,
   overflow: hidden;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
 .mosaic-window-body webview {
   height: 100%;
   width: 100%;
@@ -17,4 +22,18 @@ body,
 
 .disable-pointer-events {
   pointer-events: none;
+}
+
+.app-header {
+  background-color: #383e47;
+  color: #f6f7f9;
+  height: 40px;
+  display: flex;
+  padding-left: 10px;
+  font-size: 14px;
+}
+
+.app-header .bp5-button {
+  margin: auto 0;
+  height: fit-content;
 }
