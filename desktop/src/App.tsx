@@ -1,24 +1,26 @@
-import React, { useEffect } from 'react';
-import { Mosaic, MosaicWindow, ExpandButton, RemoveButton, SplitButton } from 'react-mosaic-component';
+import React, { useEffect, useRef } from 'react';
+import { Button } from '@blueprintjs/core';
 
 import 'react-mosaic-component/react-mosaic-component.css';
 import 'react-mosaic-component/styles/index.less';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-
 import './App.less';
-
-export type ViewId = 'a' | 'b' | 'c' | 'new';
-
-// These are placeholders for the eventual webview based model we will use
-const TITLE_MAP: Record<ViewId, string> = {
-  a: 'https://www.unternet.co',
-  b: 'https://en.wikipedia.org/wiki/NCSA_Mosaic',
-  c: 'http://68k.news',
-  new: 'https://csumb.edu/',
-};
+import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 
 function App() {
+  const windowManager = useRef<WindowManagerHandle>(null);
+  const needsInit = useRef(true);
+
+  useEffect(() => {
+    if (!needsInit.current || !windowManager.current) {
+      return;
+    }
+
+    // Spawn initial window
+    windowManager.current.addWindow('Window 1', <h1>Window 1</h1>);
+    needsInit.current = false;
+  }, [windowManager, needsInit]);
 
   // Strong resizing
   useEffect(() => {
@@ -42,31 +44,16 @@ function App() {
       window.removeEventListener('mouseup', handleResizeEnd);
     };
   }, []);
-
+      
   return (
-    <Mosaic<ViewId>
-      renderTile={(id, path) => (
-        <MosaicWindow<ViewId>
-         path={path}
-         createNode={() => 'new'}
-         title={TITLE_MAP[id]}
-         toolbarControls= {[<SplitButton />, <ExpandButton />, <RemoveButton />]}>
-          {/* This is a placeholder for the eventual webview based model we will use */}
-          <webview id={id} src={TITLE_MAP[id]}></webview>
-        </MosaicWindow>
-      )}
-      className={"mosaic-blueprint-theme"}
-      blueprintNamespace="bp5"
-      initialValue={{
-        direction: 'row',
-        first: 'a',
-        second: {
-          direction: 'column',
-          first: 'b',
-          second: 'c',
-        },
-      }}
-    />
+    <>
+      <div className="app-header bp5-dark"><Button
+        onClick={() =>
+          windowManager.current.addWindow('New Window', <h1>Some Stuff</h1>)
+        }
+      text="Add window" /></div>
+      <WindowManager ref={windowManager} />
+    </>
   );
 }
 
