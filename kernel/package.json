@@ -2,7 +2,7 @@
     "name": "magic-test-kernel",
     "version": "0.1.0",
     "scripts": {
-        "start": "tsx src/index.ts"
+        "dev": "tsx src/index.ts"
     },
     "dependencies": {
         "@ai-sdk/anthropic": "^1.2.10",

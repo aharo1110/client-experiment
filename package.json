@@ -5,11 +5,10 @@
   ],
   "main": "desktop/dist/electron/main.js",
   "scripts": {
-    "preinstall": "npm run build:kernel",
-    "build": "npm run build:kernel && npm run build:desktop",
+    "build": "npm run build:desktop",
     "build:desktop": "cd desktop && rimraf dist && cross-env NODE_ENV=production npm run build",
-    "build:kernel": "cd kernel && npm run build",
-    "dev": "npm run dev:desktop",
+    "dev": "npm run dev:desktop && npm run dev:kernel",
+    "dev:kernel": "cd kernel && npm run dev",
     "dev:desktop": "cd desktop && npm run dev"
   },
   "devDependencies": {
