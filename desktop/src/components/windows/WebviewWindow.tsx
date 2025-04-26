@@ -1,11 +1,16 @@
-import React, { useEffect } from 'react';
+import { InputGroup } from '@blueprintjs/core';
+import styled from '@emotion/styled';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
 
 type Props = {
-  url: string;
+  initialUrl: string;
 };
 
-export function WebviewWindow({ url }: Props) {
+export function WebviewWindow({ initialUrl }: Props) {
   const webviewRef = React.useRef<HTMLWebViewElement>(null);
+  const inputValueRef = React.useRef<string>(null);
+
+  const [url, setUrl] = useState(initialUrl);
 
   // Prevent webview from interfering with resizing.
   useEffect(() => {
@@ -24,11 +29,39 @@ export function WebviewWindow({ url }: Props) {
     };
   }, []);
 
+  // Only apply input value to state when Enter is pressed (or focus is lost).
+  const onInputKeyDown = (e: KeyboardEvent) =>
+    e.key === 'Enter' && (e.target as HTMLElement).blur();
+
   return (
-    <webview
-      ref={webviewRef}
-      src={url}
-      style={{ width: '100%', height: '100%', backgroundColor: 'black' }}
-    />
+    <Container>
+      <HeaderContainer className="app-header bp5-dark">
+        <InputGroup
+          defaultValue={url}
+          onValueChange={(s) => (inputValueRef.current = s)}
+          onBlur={() => setUrl(inputValueRef.current)}
+          onKeyDown={onInputKeyDown}
+        />
+      </HeaderContainer>
+      <StyledWebview ref={webviewRef} src={url} />
+    </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const HeaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledWebview = styled('webview')`
+  width: 100%;
+  height: 100%;
+  background-color: black;
+`;

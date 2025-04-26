@@ -26,7 +26,7 @@ function App() {
   const onClickAddWindow = () => {
     windowManager.current.addWindow(
       'github.com',
-      <WebviewWindow url="https://www.github.com" />
+      <WebviewWindow initialUrl="https://github.com" />
     );
   };
 
