@@ -6,7 +6,7 @@
     },
     "dependencies": {
         "@ai-sdk/anthropic": "^1.2.10",
-        "@unternet/kernel": "^0.3.4",
+        "@unternet/kernel": "^0.3.5",
         "chalk": "^5.4.1",
         "mime-types": "^3.0.1",
         "readline": "^1.3.0",
