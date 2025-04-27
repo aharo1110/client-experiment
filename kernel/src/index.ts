@@ -23,7 +23,7 @@ import {
 
 /* MODEL & KERNEL SETUP */
 
-const model = openai('gpt-4o');
+const model = openai('gpt-4o-mini');
 // const model = anthropic('claude-3-7-sonnet-20250219');
 const interpreter = new Interpreter({
   model,
