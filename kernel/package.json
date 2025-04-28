@@ -1,36 +1,20 @@
 {
-  "type": "module",
-  "main": "dist/index.js",
-  "directories": {
-    "example": "example"
-  },
-  "scripts": {
-    "build": "tsc",
-    "dev": "chokidar 'src/**/*' -c 'npm run build'",
-    "docs": "typedoc",
-    "example": "cd example && npx tsx src/index.ts",
-    "test": "vitest --root tests --watch=false",
-    "test:dev": "vitest --root tests --watch"
-  },
-  "imports": {
-    "#src/*": "./src/*",
-    "#tests/tooling": "./tests/common/tooling.ts",
-    "#tests/*": "./tests/*"
-  },
-  "dependencies": {
-    "@ai-sdk/openai": "^1.0.10",
-    "@web-applets/sdk": "^0.1.5",
-    "ai": "^4.0.20",
-    "dedent": "^1.5.3",
-    "ollama-ai-provider": "^1.2.0",
-    "openai": "^4.76.1",
-    "zod": "^3.24.2"
-  },
-  "devDependencies": {
-    "chokidar-cli": "^3.0.0",
-    "mime-types": "^3.0.1",
-    "typedoc": "^0.28.2",
-    "typescript": "^5.8.2",
-    "vitest": "^3.1.1"
-  }
+    "name": "magic-test-kernel",
+    "version": "0.1.0",
+    "scripts": {
+        "dev": "tsx src/index.ts"
+    },
+    "dependencies": {
+        "@ai-sdk/anthropic": "^1.2.10",
+        "@unternet/kernel": "^0.3.5",
+        "chalk": "^5.4.1",
+        "mime-types": "^3.0.1",
+        "readline": "^1.3.0",
+        "shell-quote": "^1.8.2",
+        "untildify": "^5.0.0"
+    },
+    "devDependencies": {
+        "dotenv": "^16.4.7",
+        "tsx": "^4.19.3"
+    }
 }
