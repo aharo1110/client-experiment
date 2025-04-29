@@ -1,0 +1,54 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+    <head> 
+        <meta charset="UTF-8" /> 
+        <title>Chat</title> 
+        <style> 
+        body { font-family: sans-serif; margin: 10px; } 
+        #chat { max-width: 600px; margin: auto; } 
+        .message { border: 1px solid #ccc; padding: 5px; margin: 5px 0; } 
+        input, button { padding: 10px; font-size: 16px; } 
+        </style> 
+    </head> 
+    <body> 
+        <div id="chat">
+        </div> 
+        <input type="text" id="user_input" placeholder="Type a message..." /> 
+        <button id="send_btn">Send</button> 
+        <script> 
+            async function send_message() { 
+                fetch_messages();
+                const input_element = document.getElementById('user_input'); 
+                const user_input = input_element.value; 
+                if (!user_input) return; 
+                const response = await fetch('/chat', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ user_input }) 
+                }); 
+                const data = await response.json(); 
+                render_messages(data.messages); 
+                input_element.value = ''; 
+            } 
+            document.getElementById('send_btn').addEventListener('click', send_message); 
+            function render_messages(messages) { 
+                const chat_div = document.getElementById('chat'); 
+                chat_div.innerHTML = ''; 
+                messages.forEach(msg => { 
+                    const div = document.createElement('div'); 
+                    div.className = 'message'; 
+                    div.innerHTML = msg.html; // Use pre-rendered HTML from the server
+                    chat_div.appendChild(div); 
+                }); 
+            } 
+
+            async function fetch_messages() { 
+                const response = await fetch('/chat'); 
+                const data = await response.json(); 
+                render_messages(data.messages); 
+            }
+
+            document.addEventListener('DOMContentLoaded', fetch_messages);
+        </script> 
+    </body> 
+</html>
