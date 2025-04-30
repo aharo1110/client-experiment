@@ -43,6 +43,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/node_modules', express.static(path.join(__dirname, '../../node_modules')));
+
 app.get('/', (req, res) => { 
     res.render('index', { messages: [] });
 });
