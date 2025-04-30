@@ -76,6 +76,7 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
             <ExpandButton />,
             <button
               key="close"
+              title="Close"
               className="mosaic-default-control bp5-button bp5-minimal close-button bp5-icon-cross"
               onClick={() => {
                 console.log('Closing window', id);
