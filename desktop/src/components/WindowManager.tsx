@@ -47,8 +47,10 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
     (id: number) => {
       setWindows((prev) => {
         const { [id]: _, ...remainingWindows } = prev;
+        const remainingIds = Object.keys(remainingWindows).map(Number);
         // Rebuild the layout based on the remaining window IDs
-        setLayout(createBalancedTreeFromLeaves(Object.keys(remainingWindows).map(Number)));
+        const newLayout = createBalancedTreeFromLeaves(remainingIds);
+        setLayout(newLayout);
         return remainingWindows;
       });
     },
