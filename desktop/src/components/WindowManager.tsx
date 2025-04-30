@@ -10,6 +10,7 @@ import {
   Mosaic,
   MosaicNode,
   MosaicWindow,
+  ExpandButton
 } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 
@@ -69,6 +70,17 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
           title={windows[id].title}
           path={path}
           // createNode={() => 0}
+          toolbarControls={[
+            <ExpandButton />,
+            <button
+              key="close"
+              className="mosaic-default-control bp5-button bp5-minimal close-button bp5-icon-cross"
+              onClick={() => {
+                console.log('Closing window', id);
+              removeWindow(id);
+              }}
+            />
+          ]}
         >
           <>{windows[id].content}</>
         </MosaicWindow>
