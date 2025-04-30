@@ -24,7 +24,7 @@ import { dropRight } from 'lodash-es';
 import 'react-mosaic-component/react-mosaic-component.css';
 
 export type WindowManagerHandle = {
-  addWindow: (title: string, content: ReactNode) => void;
+  addToTopRight: (title: string, content: ReactNode) => void;
 };
 
 type WindowData = {
