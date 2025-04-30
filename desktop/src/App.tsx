@@ -19,12 +19,12 @@ function App() {
     }
 
     // Spawn initial window
-    windowManager.current.addWindow('Window 1', <h1>Window 1</h1>);
+    windowManager.current.addToTopRight('CSUMB', <WebviewWindow initialUrl="https://csumb.edu" />);
     needsInit.current = false;
   }, [windowManager, needsInit]);
 
   const onClickAddWindow = () => {
-    windowManager.current.addWindow(
+    windowManager.current.addToTopRight(
       'github.com',
       <WebviewWindow initialUrl="https://github.com" />
     );
