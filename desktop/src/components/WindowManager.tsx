@@ -6,12 +6,21 @@ import React, {
   useState,
 } from 'react';
 import {
+  getLeaves,
+  getPathToCorner,
+  getNodeAtPath,
+  getOtherDirection,
+  updateTree,
+  Corner,
+  MosaicParent,
+  MosaicDirection,
   createBalancedTreeFromLeaves,
   Mosaic,
   MosaicNode,
   MosaicWindow,
   ExpandButton
 } from 'react-mosaic-component';
+import { dropRight } from 'lodash-es';
 import 'react-mosaic-component/react-mosaic-component.css';
 
 export type WindowManagerHandle = {
@@ -28,41 +37,83 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   const [windows, setWindows] = useState<Record<number, WindowData>>({});
   const [layout, setLayout] = useState<MosaicNode<number> | null>(null);
 
-  const addWindow = useCallback(
-    (title: string, content: ReactNode) =>
-      setWindows((prev) => {
-        const newId = Object.keys(prev).length + 1;
-        const newWindows = { ...prev, [newId]: { id: newId, title, content } };
-        const newLayout = createBalancedTreeFromLeaves(
-          Object.keys(newWindows).map(Number)
-        );
-
+  const [windowIdCounter, setWindowIdCounter] = useState(1);
+  const addToTopRight = useCallback(
+    (title: string, content: ReactNode) => {
+      const newId = windowIdCounter;
+      setWindowIdCounter(windowIdCounter + 1);
+      setWindows((prev) => ({
+        ...prev,
+        [newId]: { id: newId, title, content },
+      }));
+  
+      if (layout) {
+        const totalWindowCount = getLeaves(layout).length;
+        const path = getPathToCorner(layout, Corner.TOP_RIGHT);
+        const parent = getNodeAtPath(layout, dropRight(path)) as MosaicParent<number> | null;
+        const destination = getNodeAtPath(layout, path) as number;
+        const direction: MosaicDirection = parent ? getOtherDirection(parent.direction) : 'row';
+  
+        const first = direction === "row" ? destination : newId;
+        const second = direction === "row" ? newId : destination;
+  
+        const newLayout = updateTree(layout, [
+          {
+            path: path,
+            spec: {
+              $set: {
+                direction,
+                first,
+                second,
+              },
+            },
+          },
+        ]);
         setLayout(newLayout);
-        return newWindows;
-      }),
-    []
-  );
-
-  const removeWindow = useCallback(
-    (id: number) => {
-      setWindows((prev) => {
-        const { [id]: _, ...remainingWindows } = prev;
-        const remainingIds = Object.keys(remainingWindows).map(Number);
-        // Rebuild the layout based on the remaining window IDs
-        const newLayout = createBalancedTreeFromLeaves(remainingIds);
-        setLayout(newLayout);
-        return remainingWindows;
-      });
+      } else {
+        setLayout(newId);
+      }
     },
-    []
+    [layout, windowIdCounter]
   );
 
   useImperativeHandle(ref, () => ({
-    addWindow,
+    addToTopRight
   }));
 
   if (!layout) {
     return <h1>Empty</h1>;
+  }
+
+  const removeNodePreservingLayout = <T,>(
+    tree: MosaicNode<T> | null,
+    nodeId: T
+  ): MosaicNode<T> | null => {
+    if (!tree) return null;
+    if (tree === nodeId) {
+      return null;
+    }
+    if (typeof tree === "object") {
+      const newFirst = removeNodePreservingLayout(tree.first, nodeId);
+      const newSecond = removeNodePreservingLayout(tree.second, nodeId);
+  
+      if (newFirst === null && newSecond === null) {
+        return null;
+      }
+      if (newFirst === null) {
+        return newSecond;
+      }
+      if (newSecond === null) {
+        return newFirst;
+      }
+      return {
+        first: newFirst,
+        second: newSecond,
+        direction: tree.direction,
+        splitPercentage: (tree as any).splitPercentage,
+      };
+    }
+    return tree;
   }
 
   return (
@@ -80,7 +131,11 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
               className="mosaic-default-control bp5-button bp5-minimal close-button bp5-icon-cross"
               onClick={() => {
                 console.log('Closing window', id);
-              removeWindow(id);
+                setWindows((prev) => {
+                  const { [id]: removed, ...remainingWindows } = prev;
+                  return remainingWindows;
+                });
+                setLayout((prevLayout) => removeNodePreservingLayout(prevLayout, id));
               }}
             />
           ]}
@@ -98,27 +153,3 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
     />
   );
 });
-
-function removeNodeFromTree<T>(tree: MosaicNode<T>, nodeId: T): MosaicNode<T> | null {
-  if (tree === nodeId) {
-    return null;
-  }
-  if (typeof tree === 'object') {
-    const { first, second, direction } = tree;
-    const newFirst = removeNodeFromTree(first, nodeId);
-    const newSecond = removeNodeFromTree(second, nodeId);
-
-    if (!newFirst && !newSecond) {
-      return null;
-    }
-    if (!newFirst) {
-      return newSecond;
-    }
-    if (!newSecond) {
-      return newFirst;
-    }
-
-    return { first: newFirst, second: newSecond, direction };
-  }
-  return tree;
-}
