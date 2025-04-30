@@ -42,6 +42,18 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
     []
   );
 
+  const removeWindow = useCallback(
+    (id: number) => {
+      setWindows((prev) => {
+        const { [id]: _, ...remainingWindows } = prev;
+        // Rebuild the layout based on the remaining window IDs
+        setLayout(createBalancedTreeFromLeaves(Object.keys(remainingWindows).map(Number)));
+        return remainingWindows;
+      });
+    },
+    []
+  );
+
   useImperativeHandle(ref, () => ({
     addWindow,
   }));
@@ -65,6 +77,33 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
       blueprintNamespace="bp5"
       value={layout}
       onChange={setLayout}
+      onRelease={(id) => {
+        console.log('blablabla', id);
+      }}
     />
   );
 });
+
+function removeNodeFromTree<T>(tree: MosaicNode<T>, nodeId: T): MosaicNode<T> | null {
+  if (tree === nodeId) {
+    return null;
+  }
+  if (typeof tree === 'object') {
+    const { first, second, direction } = tree;
+    const newFirst = removeNodeFromTree(first, nodeId);
+    const newSecond = removeNodeFromTree(second, nodeId);
+
+    if (!newFirst && !newSecond) {
+      return null;
+    }
+    if (!newFirst) {
+      return newSecond;
+    }
+    if (!newSecond) {
+      return newFirst;
+    }
+
+    return { first: newFirst, second: newSecond, direction };
+  }
+  return tree;
+}
