@@ -1,4 +1,10 @@
-import { Button, InputGroup, Menu, MenuItem, Popover } from '@blueprintjs/core';
+import {
+  Button,
+  InputGroup,
+  Menu,
+  MenuItem,
+  Popover,
+} from '@blueprintjs/core';
 import styled from '@emotion/styled';
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
@@ -8,12 +14,22 @@ type Props = {
   onUrlChange?: (newUrl: string) => void;
 };
 
-export function WebviewWindow({ initialUrl, onTitleChange, onUrlChange }: Props) {
+type Favorite = {
+  title: string;
+  url: string;
+};
+
+export function WebviewWindow({
+                                initialUrl,
+                                onTitleChange,
+                                onUrlChange,
+                              }: Props) {
   const webviewRef = useRef<Electron.WebviewTag | null>(null);
   const inputValueRef = useRef<string>(initialUrl);
   const [url, setUrl] = useState(initialUrl);
   const [darkMode, setDarkMode] = useState(true);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [currentTitle, setCurrentTitle] = useState<string>('Untitled');
 
   const normalizeUrl = (raw: string): string => {
     try {
@@ -24,16 +40,20 @@ export function WebviewWindow({ initialUrl, onTitleChange, onUrlChange }: Props)
     }
   };
 
-  const isFavorited = favorites.includes(url);
+  const isFavorited = favorites.some((fav) => fav.url === url);
 
   const toggleFavorite = () => {
     setFavorites((prev) =>
-        prev.includes(url) ? prev.filter((fav) => fav !== url) : [...prev, url]
+        isFavorited
+            ? prev.filter((fav) => fav.url !== url)
+            : [...prev, { url, title: currentTitle }]
     );
   };
 
-  const handleBack = () => webviewRef.current?.canGoBack() && webviewRef.current.goBack();
-  const handleForward = () => webviewRef.current?.canGoForward() && webviewRef.current.goForward();
+  const handleBack = () =>
+      webviewRef.current?.canGoBack() && webviewRef.current.goBack();
+  const handleForward = () =>
+      webviewRef.current?.canGoForward() && webviewRef.current.goForward();
   const handleReload = () => webviewRef.current?.reload();
   const handleHome = () => setUrl('https://www.google.com');
 
@@ -60,9 +80,13 @@ export function WebviewWindow({ initialUrl, onTitleChange, onUrlChange }: Props)
 
   useEffect(() => {
     const webview = webviewRef.current;
-    if (!webview || !onTitleChange) return;
+    if (!webview) return;
 
-    const handleTitle = (e: any) => onTitleChange(e.title);
+    const handleTitle = (e: any) => {
+      setCurrentTitle(e.title);
+      if (onTitleChange) onTitleChange(e.title);
+    };
+
     webview.addEventListener('page-title-updated', handleTitle);
     return () => {
       webview.removeEventListener('page-title-updated', handleTitle);
@@ -101,20 +125,22 @@ export function WebviewWindow({ initialUrl, onTitleChange, onUrlChange }: Props)
             />
             <Popover
                 content={
-                  <Menu>
+                  <StyledMenu darkMode={darkMode}>
                     {favorites.length === 0 ? (
                         <MenuItem text="No favorites yet" disabled />
                     ) : (
                         favorites.map((fav) => (
-                            <MenuItem
-                                key={fav}
-                                text={fav}
-                                onClick={() => setUrl(fav)}
+                            <StyledMenuItem
+                                key={fav.url}
+                                text={fav.title}
+                                label={fav.url}
                                 icon="link"
+                                onClick={() => setUrl(fav.url)}
+                                darkMode={darkMode}
                             />
                         ))
                     )}
-                  </Menu>
+                  </StyledMenu>
                 }
                 position="bottom"
             >
@@ -192,5 +218,33 @@ const StyledWebview = styled('webview')<{ darkMode: boolean }>`
 
   &.disable-pointer-events {
     pointer-events: none;
+  }
+`;
+
+const StyledMenu = styled(Menu)<{ darkMode: boolean }>`
+  background-color: ${({ darkMode }) => (darkMode ? '#2a2a2a' : '#fff')};
+  color: ${({ darkMode }) => (darkMode ? '#f0f0f0' : '#111')};
+  min-width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid ${({ darkMode }) => (darkMode ? '#444' : '#ccc')};
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+`;
+
+const StyledMenuItem = styled(MenuItem)<{ darkMode: boolean }>`
+  font-size: 13px;
+  padding: 6px 12px;
+
+  &:hover {
+    background-color: ${({ darkMode }) => (darkMode ? '#393939' : '#f2f2f2')};
+  }
+
+  .bp5-icon {
+    margin-right: 8px;
+  }
+
+  .bp5-menu-item-label {
+    color: ${({ darkMode }) => (darkMode ? '#bbb' : '#666')};
+    font-size: 11px;
   }
 `;
