@@ -13,7 +13,7 @@ import { useUrls, UrlsProvider } from './contexts/UrlsContext';
 import { UrlSync } from './components/UrlSync';
 
 export const CHAT_URL = "http://localhost:3001";
-const HOMEPAGE_URL = "http://csumb.edu";
+export const HOMEPAGE_URL = "http://csumb.edu";
 const NEW_WINDOW_URL = "http://github.com";
 
 function App() {
