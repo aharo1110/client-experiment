@@ -8,19 +8,33 @@ import 'react-mosaic-component/styles/index.less';
 import './App.less';
 import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 import { WebviewWindow } from './components/windows/WebviewWindow';
+import { HeadlessWindow } from './components/windows/HeadlessWindow';
+
+export const CHAT_URL = "http://localhost:3001";
 
 function App() {
   const windowManager = useRef<WindowManagerHandle>(null);
   const needsInit = useRef(true);
 
   useEffect(() => {
-    if (!needsInit.current || !windowManager.current) {
-      return;
+    async function initWindows() {
+      if (!windowManager.current) {
+        return;
+      }
+      windowManager.current.addToTopRight(
+        'CSUMB',
+        <WebviewWindow initialUrl="https://csumb.edu" />
+      );
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      windowManager.current.addToTopRight(
+        'Chat',
+        <HeadlessWindow initialUrl={CHAT_URL} />
+      );
     }
-
-    // Spawn initial window
-    windowManager.current.addToTopRight('CSUMB', <WebviewWindow initialUrl="https://csumb.edu" />);
-    needsInit.current = false;
+    if (needsInit.current && windowManager.current) {
+      initWindows();
+      needsInit.current = false;
+    }
   }, [windowManager, needsInit]);
 
   const onClickAddWindow = () => {
