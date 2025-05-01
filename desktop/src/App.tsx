@@ -51,7 +51,8 @@ function App() {
   return (
     <UrlsProvider>
       <div className="app-header bp5-dark">
-        <Button onClick={onClickAddWindow} text="Add window" />
+        <Button onClick={onClickAddWindow} text="Add window"
+         style={{fontFamily: "'Segoe UI', system-ui, sans-serif"}} />
       </div>
       <WindowManager ref={windowManager} />
       <UrlSync />

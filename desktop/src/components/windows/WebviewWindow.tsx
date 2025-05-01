@@ -108,20 +108,22 @@ export function WebviewWindow({
       <Container darkMode={darkMode}>
         <HeaderContainer darkMode={darkMode}>
           <ButtonGroup>
-            <StyledButton icon="arrow-left" onClick={handleBack} />
-            <StyledButton icon="arrow-right" onClick={handleForward} />
-            <StyledButton icon="refresh" onClick={handleReload} />
-            <StyledButton icon="home" onClick={handleHome} />
+            <StyledButton icon="arrow-left" onClick={handleBack} variant="minimal" />
+            <StyledButton icon="arrow-right" onClick={handleForward} variant="minimal" />
+            <StyledButton icon="refresh" onClick={handleReload} variant="minimal" />
+            <StyledButton icon="home" onClick={handleHome} variant="minimal" />
             <StyledButton
                 icon={darkMode ? 'flash' : 'moon'}
                 onClick={() => setDarkMode(!darkMode)}
                 title="Toggle dark mode"
+                variant="minimal"
             />
             <StyledButton
                 icon={isFavorited ? 'star' : 'star-empty'}
                 onClick={toggleFavorite}
                 intent={isFavorited ? 'warning' : 'none'}
                 title={isFavorited ? 'Unfavorite' : 'Add to Favorites'}
+                variant="minimal"
             />
             <Popover
                 content={
@@ -144,10 +146,10 @@ export function WebviewWindow({
                 }
                 position="bottom"
             >
-              <StyledButton icon="bookmark" title="View favorites" />
+              <StyledButton icon="bookmark" title="View favorites" variant="minimal"/>
             </Popover>
           </ButtonGroup>
-          <Favicon src={`https://www.google.com/s2/favicons?sz=32&domain_url=${url}`} />
+          
           <StyledInputGroup
               defaultValue={url}
               onValueChange={(s) => (inputValueRef.current = s)}
@@ -155,6 +157,7 @@ export function WebviewWindow({
               onKeyDown={onInputKeyDown}
               fill
               darkMode={darkMode}
+              leftElement={<Favicon src={`https://www.google.com/s2/favicons?sz=32&domain_url=${url}`} />}
           />
         </HeaderContainer>
         <StyledWebview ref={webviewRef} src={url} darkMode={darkMode} />
@@ -193,7 +196,7 @@ const StyledButton = styled(Button)`
 const Favicon = styled.img`
   width: 20px;
   height: 20px;
-  margin-right: 6px;
+  margin: 5px;
   border-radius: 4px;
 `;
 
@@ -208,6 +211,7 @@ const StyledInputGroup = styled(InputGroup, {
     color: ${({ darkMode }) => (darkMode ? '#f5f5f5' : '#111')};
     border: 1px solid ${({ darkMode }) => (darkMode ? '#444' : '#ccc')};
     padding: 8px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
   }
 `;
 
