@@ -8,7 +8,6 @@ type Props = {
 
 export function HeadlessWindow({ initialUrl }: Props) {
   const webviewRef = React.useRef<HTMLWebViewElement>(null);
-  const inputValueRef = React.useRef<string>(null);
 
   const [url, setUrl] = useState(initialUrl);
 
@@ -28,10 +27,6 @@ export function HeadlessWindow({ initialUrl }: Props) {
       window.removeEventListener('mouseup', handleResizeEnd);
     };
   }, []);
-
-  // Only apply input value to state when Enter is pressed (or focus is lost).
-  const onInputKeyDown = (e: KeyboardEvent) =>
-    e.key === 'Enter' && (e.target as HTMLElement).blur();
 
   return (
     <Container>
