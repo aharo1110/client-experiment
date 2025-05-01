@@ -1,5 +1,5 @@
 import { Button } from '@blueprintjs/core';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
@@ -9,6 +9,8 @@ import './App.less';
 import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 import { WebviewWindow } from './components/windows/WebviewWindow';
 import { HeadlessWindow } from './components/windows/HeadlessWindow';
+import { useUrls, UrlsProvider } from './contexts/UrlsContext';
+import { UrlSync } from './components/UrlSync';
 
 export const CHAT_URL = "http://localhost:3001";
 const HOMEPAGE_URL = "http://csumb.edu";
@@ -47,12 +49,13 @@ function App() {
   };
 
   return (
-    <>
+    <UrlsProvider>
       <div className="app-header bp5-dark">
         <Button onClick={onClickAddWindow} text="Add window" />
       </div>
       <WindowManager ref={windowManager} />
-    </>
+      <UrlSync />
+    </UrlsProvider>
   );
 }
 

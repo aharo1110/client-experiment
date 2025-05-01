@@ -5,9 +5,10 @@ import React, { KeyboardEvent, useEffect, useState } from 'react';
 type Props = {
   initialUrl: string;
   onTitleChange?: (newTitle: string) => void;
+  onUrlChange?: (newUrl: string) => void;
 };
 
-export function WebviewWindow({ initialUrl, onTitleChange }: Props) {
+export function WebviewWindow({ initialUrl, onTitleChange, onUrlChange }: Props) {
   const webviewRef = React.useRef<HTMLWebViewElement>(null);
   const inputValueRef = React.useRef<string>(null);
   const [url, setUrl] = useState(initialUrl);
@@ -42,6 +43,21 @@ export function WebviewWindow({ initialUrl, onTitleChange }: Props) {
       };
     }
   }, [onTitleChange]);
+
+  useEffect(() => {
+    const currentWebview = webviewRef.current;
+    if (currentWebview && onUrlChange) {
+      const handleDidNavigate = (event: any) => {
+        // event.url contains the new URL after navigation.
+        console.log('Navigated to:', event.url);
+        onUrlChange(event.url);
+      };
+      currentWebview.addEventListener('did-navigate', handleDidNavigate);
+      return () => {
+        currentWebview.removeEventListener('did-navigate', handleDidNavigate);
+      };
+    }
+  }, [onUrlChange]);
 
   // Only apply input value to state when Enter is pressed (or focus is lost).
   const onInputKeyDown = (e: KeyboardEvent) =>

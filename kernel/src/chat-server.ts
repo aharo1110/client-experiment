@@ -16,6 +16,7 @@ import resources from './resources';
 import { protocols } from './protocols';
 import { ProcessRuntime } from '@unternet/kernel';
 
+import cors from 'cors';
 import MarkdownIt from 'markdown-it';
 
 const model = openai('gpt-4o-mini');
@@ -35,8 +36,10 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 let messages: any[] = [];
+let urls: string[] = [];
 
 app.use((req, res, next) => {
     res.locals.md = md;
@@ -47,6 +50,20 @@ app.use('/node_modules', express.static(path.join(__dirname, '../../node_modules
 
 app.get('/', (req, res) => { 
     res.render('index', { messages: [] });
+});
+
+app.get('/urls', (req, res) => {
+    res.json({ urls });
+});
+
+app.post('/urls', (req, res) => {
+    const { urls: newUrls } = req.body;
+    if (Array.isArray(newUrls)) {
+        urls = newUrls;
+        res.json({ success: true });
+    } else {
+        res.status(400).json({ error: 'Invalid URLs' });
+    }
 });
 
 app.get('/chat', (req, res) => {
