@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useImperativeHandle,
   useState,
+  useEffect,
 } from 'react';
 import {
   getLeaves,
@@ -22,20 +23,24 @@ import {
 } from 'react-mosaic-component';
 import { dropRight } from 'lodash-es';
 import 'react-mosaic-component/react-mosaic-component.css';
+import { useUrls } from '../contexts/UrlsContext';
 
 export type WindowManagerHandle = {
   addToTopRight: (title: string, content: ReactNode) => void;
+  getCurrentUrls: () => string[];
 };
 
 type WindowData = {
   id: number;
   title: string;
   content: ReactNode;
+  url?: string;
 };
 
 export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   const [windows, setWindows] = useState<Record<number, WindowData>>({});
   const [layout, setLayout] = useState<MosaicNode<number> | null>(null);
+  const { setUrls } = useUrls();
 
   const [windowIdCounter, setWindowIdCounter] = useState(1);
 
@@ -45,6 +50,22 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
       [id]: { ...prev[id], title: newTitle },
     }));
   }, []);
+
+  const updateWindowUrl = useCallback((id: number, newUrl: string) => {
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], url: newUrl },
+    }));
+  }, []);
+
+  // Whenever windows change, update the global URL list.
+  useEffect(() => {
+    const globalUrls = Object.values(windows)
+      .map((win) => win.url)
+      .filter((url): url is string => !!url);
+    console.log('Updating global URLs:', globalUrls);
+    setUrls(globalUrls);
+  }, [windows, setUrls]);
   
   const addToTopRight = useCallback(
     (title: string, content: ReactNode) => {
@@ -86,7 +107,11 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   );
 
   useImperativeHandle(ref, () => ({
-    addToTopRight
+    addToTopRight,
+    getCurrentUrls: () =>
+      Object.values(windows)
+        .map((win) => win.url)
+        .filter((url): url is string => !!url)
   }));
 
   if (!layout) {
@@ -129,10 +154,11 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
     renderTile={(id, path) => {
       // If the content is a valid React element, inject the onTitleChange prop.
       const content = windows[id].content;
-      const contentWithTitle =
+      const contentWithProps =
         React.isValidElement(content)
           ? React.cloneElement(content, { 
-              onTitleChange: (newTitle: string) => updateWindowTitle(id, newTitle)
+              onTitleChange: (newTitle: string) => updateWindowTitle(id, newTitle),
+              onUrlChange: (newUrl: string) => updateWindowUrl(id, newUrl)
             })
           : content;
 
@@ -158,7 +184,7 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
             />
           ]}
         >
-          {contentWithTitle}
+          {contentWithProps}
         </MosaicWindow>
       );}}
       className={'mosaic-blueprint-theme'}
