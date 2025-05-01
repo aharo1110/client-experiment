@@ -46,11 +46,6 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const HeaderContainer = styled.div`
-  align-items: center;
-  justify-content: center;
-`;
-
 const StyledWebview = styled('webview')`
   width: 100%;
   height: 100%;
