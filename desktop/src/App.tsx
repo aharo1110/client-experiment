@@ -8,6 +8,7 @@ import 'react-mosaic-component/styles/index.less';
 import './App.less';
 import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 import { WebviewWindow } from './components/windows/WebviewWindow';
+import { HeadlessWindow } from './components/windows/HeadlessWindow';
 
 export const CHAT_URL = "http://localhost:3001";
 
@@ -27,7 +28,7 @@ function App() {
       await new Promise((resolve) => setTimeout(resolve, 0));
       windowManager.current.addToTopRight(
         'Chat',
-        <WebviewWindow initialUrl={CHAT_URL} />
+        <HeadlessWindow initialUrl={CHAT_URL} />
       );
     }
     if (needsInit.current && windowManager.current) {
