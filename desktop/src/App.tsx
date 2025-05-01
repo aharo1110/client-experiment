@@ -11,6 +11,8 @@ import { WebviewWindow } from './components/windows/WebviewWindow';
 import { HeadlessWindow } from './components/windows/HeadlessWindow';
 
 export const CHAT_URL = "http://localhost:3001";
+const HOMEPAGE_URL = "http://csumb.edu";
+const NEW_WINDOW_URL = "http://github.com";
 
 function App() {
   const windowManager = useRef<WindowManagerHandle>(null);
@@ -22,8 +24,8 @@ function App() {
         return;
       }
       windowManager.current.addToTopRight(
-        'https://csumb.edu',
-        <WebviewWindow initialUrl="https://csumb.edu" />
+        HOMEPAGE_URL,
+        <WebviewWindow initialUrl={HOMEPAGE_URL} />
       );
       await new Promise((resolve) => setTimeout(resolve, 0));
       windowManager.current.addToTopRight(
@@ -39,8 +41,8 @@ function App() {
 
   const onClickAddWindow = () => {
     windowManager.current.addToTopRight(
-      'https://github.com',
-      <WebviewWindow initialUrl="https://github.com" />
+      NEW_WINDOW_URL,
+      <WebviewWindow initialUrl={NEW_WINDOW_URL} />
     );
   };
 
