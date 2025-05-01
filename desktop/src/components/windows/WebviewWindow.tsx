@@ -4,12 +4,12 @@ import React, { KeyboardEvent, useEffect, useState } from 'react';
 
 type Props = {
   initialUrl: string;
+  onTitleChange?: (newTitle: string) => void;
 };
 
-export function WebviewWindow({ initialUrl }: Props) {
+export function WebviewWindow({ initialUrl, onTitleChange }: Props) {
   const webviewRef = React.useRef<HTMLWebViewElement>(null);
   const inputValueRef = React.useRef<string>(null);
-
   const [url, setUrl] = useState(initialUrl);
 
   // Prevent webview from interfering with resizing.
@@ -28,6 +28,20 @@ export function WebviewWindow({ initialUrl }: Props) {
       window.removeEventListener('mouseup', handleResizeEnd);
     };
   }, []);
+
+  // Listen for title updates from the webview.
+  useEffect(() => {
+    const currentWebview = webviewRef.current;
+    if (currentWebview && onTitleChange) {
+      const handlePageTitleUpdated = (e: any) => {
+        onTitleChange(e.title);
+      };
+      currentWebview.addEventListener('page-title-updated', handlePageTitleUpdated);
+      return () => {
+        currentWebview.removeEventListener('page-title-updated', handlePageTitleUpdated);
+      };
+    }
+  }, [onTitleChange]);
 
   // Only apply input value to state when Enter is pressed (or focus is lost).
   const onInputKeyDown = (e: KeyboardEvent) =>
@@ -62,5 +76,5 @@ const HeaderContainer = styled.div`
 const StyledWebview = styled('webview')`
   width: 100%;
   height: 100%;
-  background-color: black;
+  background-color: white;
 `;

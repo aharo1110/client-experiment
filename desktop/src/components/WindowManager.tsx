@@ -38,6 +38,14 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   const [layout, setLayout] = useState<MosaicNode<number> | null>(null);
 
   const [windowIdCounter, setWindowIdCounter] = useState(1);
+
+  const updateWindowTitle = useCallback((id: number, newTitle: string) => {
+    setWindows((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], title: newTitle },
+    }));
+  }, []);
+  
   const addToTopRight = useCallback(
     (title: string, content: ReactNode) => {
       const newId = windowIdCounter;
@@ -118,7 +126,17 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
 
   return (
     <Mosaic<number>
-      renderTile={(id, path) => (
+    renderTile={(id, path) => {
+      // If the content is a valid React element, inject the onTitleChange prop.
+      const content = windows[id].content;
+      const contentWithTitle =
+        React.isValidElement(content)
+          ? React.cloneElement(content, { 
+              onTitleChange: (newTitle: string) => updateWindowTitle(id, newTitle)
+            })
+          : content;
+
+      return (
         <MosaicWindow<number>
           title={windows[id].title}
           path={path}
@@ -140,9 +158,9 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
             />
           ]}
         >
-          <>{windows[id].content}</>
+          {contentWithTitle}
         </MosaicWindow>
-      )}
+      );}}
       className={'mosaic-blueprint-theme'}
       blueprintNamespace="bp5"
       value={layout}

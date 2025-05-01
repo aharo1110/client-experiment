@@ -22,7 +22,7 @@ function App() {
         return;
       }
       windowManager.current.addToTopRight(
-        'CSUMB',
+        'https://csumb.edu',
         <WebviewWindow initialUrl="https://csumb.edu" />
       );
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -39,7 +39,7 @@ function App() {
 
   const onClickAddWindow = () => {
     windowManager.current.addToTopRight(
-      'github.com',
+      'https://github.com',
       <WebviewWindow initialUrl="https://github.com" />
     );
   };
