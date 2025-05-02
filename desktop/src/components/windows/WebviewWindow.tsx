@@ -32,6 +32,8 @@ export function WebviewWindow({
   const [darkMode, setDarkMode] = useState(false);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [currentTitle, setCurrentTitle] = useState<string>('Untitled');
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
 
   const normalizeUrl = (raw: string): string => {
     try {
@@ -97,6 +99,13 @@ export function WebviewWindow({
   }, [onTitleChange]);
 
   useEffect(() => {
+    const updateNavState = () => {
+      if (webviewRef.current) {
+        setCanGoBack(webviewRef.current.canGoToOffset(-1));
+        setCanGoForward(webviewRef.current.canGoToOffset(1));
+      }
+    };
+
     const webview = webviewRef.current;
     if (!webview) return;
     const handleNav = (e: any) => {
@@ -105,6 +114,7 @@ export function WebviewWindow({
       if (onUrlChange) onUrlChange(e.url);
       // Also update the inputValueRef if needed:
       inputValueRef.current = e.url;
+      updateNavState();
     };
     webview.addEventListener('did-navigate', handleNav);
     return () => {
@@ -118,10 +128,10 @@ export function WebviewWindow({
           <ButtonGroup>
             <StyledButton icon="arrow-left" 
             onClick={handleBack} variant="minimal"
-            disabled={webviewRef.current?.canGoBack ? true : false} />
+            disabled={canGoBack ? false : true} />
             <StyledButton icon="arrow-right" 
             onClick={handleForward} variant="minimal" 
-            disabled={webviewRef.current?.canGoForward ? true : false} />
+            disabled={canGoForward ? false : true} />
             <StyledButton icon={webviewRef.current?.isLoading ? 'refresh' : 'stop'} 
             onClick={handleReload} variant="minimal" />
             <StyledButton icon="home" onClick={handleHome} variant="minimal" />
