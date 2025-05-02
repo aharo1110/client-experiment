@@ -1,6 +1,6 @@
-import React, { useEffect, useCallback } from 'react';
-import { useUrls } from '../contexts/UrlsContext';
 import debounce from 'lodash/debounce';
+import { useCallback, useEffect } from 'react';
+import { useUrls } from '../contexts/UrlsContext';
 
 const CHAT_URL = 'http://localhost:3001';
 const URL_SYNC_INTERVAL = 1500;
@@ -16,9 +16,9 @@ export function UrlSync() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ urls: currentUrls }),
       })
-        .then(res => res.json())
-        .then(data => console.log('Server responded:', data))
-        .catch(err => console.error('Error updating urls:', err));
+        .then((res) => res.json())
+        .then((data) => console.log('Server responded:', data))
+        .catch((err) => console.error('Error updating urls:', err));
     }, URL_SYNC_INTERVAL),
     []
   );

@@ -1,10 +1,4 @@
-import {
-  Button,
-  InputGroup,
-  Menu,
-  MenuItem,
-  Popover,
-} from '@blueprintjs/core';
+import { Button, InputGroup, Menu, MenuItem } from '@blueprintjs/core';
 import styled from '@emotion/styled';
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { HOMEPAGE_URL } from '../../App';
@@ -21,10 +15,10 @@ type Favorite = {
 };
 
 export function WebviewWindow({
-                                initialUrl,
-                                onTitleChange,
-                                onUrlChange,
-                              }: Props) {
+  initialUrl,
+  onTitleChange,
+  onUrlChange,
+}: Props) {
   const webviewRef = useRef<Electron.WebviewTag | null>(null);
   const inputValueRef = useRef<string>(initialUrl);
   const [url, setUrl] = useState(initialUrl);
@@ -48,16 +42,16 @@ export function WebviewWindow({
 
   const toggleFavorite = () => {
     setFavorites((prev) =>
-        isFavorited
-            ? prev.filter((fav) => fav.url !== url)
-            : [...prev, { url, title: currentTitle }]
+      isFavorited
+        ? prev.filter((fav) => fav.url !== url)
+        : [...prev, { url, title: currentTitle }]
     );
   };
 
   const handleBack = () =>
-      webviewRef.current?.canGoBack() && webviewRef.current.goBack();
+    webviewRef.current?.canGoBack() && webviewRef.current.goBack();
   const handleForward = () =>
-      webviewRef.current?.canGoForward() && webviewRef.current.goForward();
+    webviewRef.current?.canGoForward() && webviewRef.current.goForward();
   const handleReload = () => webviewRef.current?.reload();
   const handleHome = () => setUrl(HOMEPAGE_URL);
 
@@ -123,19 +117,28 @@ export function WebviewWindow({
   }, [onUrlChange]);
 
   return (
-      <Container darkMode={darkMode}>
-        <HeaderContainer darkMode={darkMode}>
-          <ButtonGroup>
-            <StyledButton icon="arrow-left" 
-            onClick={handleBack} variant="minimal"
-            disabled={canGoBack ? false : true} />
-            <StyledButton icon="arrow-right" 
-            onClick={handleForward} variant="minimal" 
-            disabled={canGoForward ? false : true} />
-            <StyledButton icon={webviewRef.current?.isLoading ? 'refresh' : 'stop'} 
-            onClick={handleReload} variant="minimal" />
-            <StyledButton icon="home" onClick={handleHome} variant="minimal" />
-            {/*<StyledButton
+    <Container darkMode={darkMode}>
+      <HeaderContainer darkMode={darkMode}>
+        <ButtonGroup>
+          <StyledButton
+            icon="arrow-left"
+            onClick={handleBack}
+            variant="minimal"
+            disabled={canGoBack ? false : true}
+          />
+          <StyledButton
+            icon="arrow-right"
+            onClick={handleForward}
+            variant="minimal"
+            disabled={canGoForward ? false : true}
+          />
+          <StyledButton
+            icon={webviewRef.current?.isLoading ? 'refresh' : 'stop'}
+            onClick={handleReload}
+            variant="minimal"
+          />
+          <StyledButton icon="home" onClick={handleHome} variant="minimal" />
+          {/*<StyledButton
                 icon={darkMode ? 'flash' : 'moon'}
                 onClick={() => setDarkMode(!darkMode)}
                 title="Toggle dark mode"
@@ -171,26 +174,30 @@ export function WebviewWindow({
             >
               <StyledButton icon="bookmark" title="View favorites" variant="minimal"/>
             </Popover>*/}
-          </ButtonGroup>
-          
-          <StyledInputGroup
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-                inputValueRef.current = e.target.value;
-              }}
-              onBlur={() => {
-                // Optionally, commit on blur if you want.
-                setInputValue(normalizeUrl(inputValueRef.current || ''));
-              }}
-              onKeyDown={onInputKeyDown}
-              fill
-              darkMode={darkMode}
-              leftElement={<Favicon src={`https://www.google.com/s2/favicons?sz=32&domain_url=${url}`} />}
-          />
-        </HeaderContainer>
-        <StyledWebview ref={webviewRef} src={url} darkMode={darkMode} />
-      </Container>
+        </ButtonGroup>
+
+        <StyledInputGroup
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            inputValueRef.current = e.target.value;
+          }}
+          onBlur={() => {
+            // Optionally, commit on blur if you want.
+            setInputValue(normalizeUrl(inputValueRef.current || ''));
+          }}
+          onKeyDown={onInputKeyDown}
+          fill
+          darkMode={darkMode}
+          leftElement={
+            <Favicon
+              src={`https://www.google.com/s2/favicons?sz=32&domain_url=${url}`}
+            />
+          }
+        />
+      </HeaderContainer>
+      <StyledWebview ref={webviewRef} src={url} darkMode={darkMode} />
+    </Container>
   );
 }
 
