@@ -7,6 +7,7 @@ import {
 } from '@blueprintjs/core';
 import styled from '@emotion/styled';
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { HOMEPAGE_URL } from '../../App';
 
 type Props = {
   initialUrl: string;
@@ -27,9 +28,12 @@ export function WebviewWindow({
   const webviewRef = useRef<Electron.WebviewTag | null>(null);
   const inputValueRef = useRef<string>(initialUrl);
   const [url, setUrl] = useState(initialUrl);
-  const [darkMode, setDarkMode] = useState(true);
+  const [inputValue, setInputValue] = useState(initialUrl);
+  const [darkMode, setDarkMode] = useState(false);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [currentTitle, setCurrentTitle] = useState<string>('Untitled');
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
 
   const normalizeUrl = (raw: string): string => {
     try {
@@ -55,12 +59,13 @@ export function WebviewWindow({
   const handleForward = () =>
       webviewRef.current?.canGoForward() && webviewRef.current.goForward();
   const handleReload = () => webviewRef.current?.reload();
-  const handleHome = () => setUrl('https://www.google.com');
+  const handleHome = () => setUrl(HOMEPAGE_URL);
 
   const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       const value = normalizeUrl(inputValueRef.current || '');
       setUrl(value);
+      setInputValue(value);
       (e.target as HTMLInputElement).blur();
     }
   };
@@ -94,10 +99,23 @@ export function WebviewWindow({
   }, [onTitleChange]);
 
   useEffect(() => {
-    const webview = webviewRef.current;
-    if (!webview || !onUrlChange) return;
+    const updateNavState = () => {
+      if (webviewRef.current) {
+        setCanGoBack(webviewRef.current.canGoToOffset(-1));
+        setCanGoForward(webviewRef.current.canGoToOffset(1));
+      }
+    };
 
-    const handleNav = (e: any) => onUrlChange(e.url);
+    const webview = webviewRef.current;
+    if (!webview) return;
+    const handleNav = (e: any) => {
+      setUrl(e.url);
+      setInputValue(e.url);
+      if (onUrlChange) onUrlChange(e.url);
+      // Also update the inputValueRef if needed:
+      inputValueRef.current = e.url;
+      updateNavState();
+    };
     webview.addEventListener('did-navigate', handleNav);
     return () => {
       webview.removeEventListener('did-navigate', handleNav);
@@ -108,20 +126,27 @@ export function WebviewWindow({
       <Container darkMode={darkMode}>
         <HeaderContainer darkMode={darkMode}>
           <ButtonGroup>
-            <StyledButton icon="arrow-left" onClick={handleBack} />
-            <StyledButton icon="arrow-right" onClick={handleForward} />
-            <StyledButton icon="refresh" onClick={handleReload} />
-            <StyledButton icon="home" onClick={handleHome} />
-            <StyledButton
+            <StyledButton icon="arrow-left" 
+            onClick={handleBack} variant="minimal"
+            disabled={canGoBack ? false : true} />
+            <StyledButton icon="arrow-right" 
+            onClick={handleForward} variant="minimal" 
+            disabled={canGoForward ? false : true} />
+            <StyledButton icon={webviewRef.current?.isLoading ? 'refresh' : 'stop'} 
+            onClick={handleReload} variant="minimal" />
+            <StyledButton icon="home" onClick={handleHome} variant="minimal" />
+            {/*<StyledButton
                 icon={darkMode ? 'flash' : 'moon'}
                 onClick={() => setDarkMode(!darkMode)}
                 title="Toggle dark mode"
+                variant="minimal"
             />
             <StyledButton
                 icon={isFavorited ? 'star' : 'star-empty'}
                 onClick={toggleFavorite}
                 intent={isFavorited ? 'warning' : 'none'}
                 title={isFavorited ? 'Unfavorite' : 'Add to Favorites'}
+                variant="minimal"
             />
             <Popover
                 content={
@@ -144,17 +169,24 @@ export function WebviewWindow({
                 }
                 position="bottom"
             >
-              <StyledButton icon="bookmark" title="View favorites" />
-            </Popover>
+              <StyledButton icon="bookmark" title="View favorites" variant="minimal"/>
+            </Popover>*/}
           </ButtonGroup>
-          <Favicon src={`https://www.google.com/s2/favicons?sz=32&domain_url=${url}`} />
+          
           <StyledInputGroup
-              defaultValue={url}
-              onValueChange={(s) => (inputValueRef.current = s)}
-              onBlur={() => setUrl(normalizeUrl(inputValueRef.current || ''))}
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                inputValueRef.current = e.target.value;
+              }}
+              onBlur={() => {
+                // Optionally, commit on blur if you want.
+                setInputValue(normalizeUrl(inputValueRef.current || ''));
+              }}
               onKeyDown={onInputKeyDown}
               fill
               darkMode={darkMode}
+              leftElement={<Favicon src={`https://www.google.com/s2/favicons?sz=32&domain_url=${url}`} />}
           />
         </HeaderContainer>
         <StyledWebview ref={webviewRef} src={url} darkMode={darkMode} />
@@ -173,7 +205,6 @@ const Container = styled.div<{ darkMode: boolean }>`
 const HeaderContainer = styled.div<{ darkMode: boolean }>`
   display: flex;
   align-items: center;
-  padding: 10px 12px;
   gap: 10px;
   background-color: ${({ darkMode }) => (darkMode ? '#2b2f36' : '#e4e4e4')};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
@@ -181,11 +212,13 @@ const HeaderContainer = styled.div<{ darkMode: boolean }>`
 
 const ButtonGroup = styled.div`
   display: flex;
-  gap: 6px;
+  gap: 0;
+  padding-left: 7px;
 `;
 
 const StyledButton = styled(Button)`
-  padding: 6px 8px;
+  padding: 6px 0;
+  width: 32px;
   min-width: unset;
   border-radius: 4px;
 `;
@@ -193,7 +226,7 @@ const StyledButton = styled(Button)`
 const Favicon = styled.img`
   width: 20px;
   height: 20px;
-  margin-right: 6px;
+  margin: 5px;
   border-radius: 4px;
 `;
 
@@ -203,11 +236,12 @@ const StyledInputGroup = styled(InputGroup, {
   flex-grow: 1;
 
   input {
-    border-radius: 6px;
+    border-radius: 0;
     background-color: ${({ darkMode }) => (darkMode ? '#1f1f1f' : '#fff')};
     color: ${({ darkMode }) => (darkMode ? '#f5f5f5' : '#111')};
     border: 1px solid ${({ darkMode }) => (darkMode ? '#444' : '#ccc')};
     padding: 8px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
   }
 `;
 
