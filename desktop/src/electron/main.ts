@@ -1,11 +1,6 @@
-import {
-  app,
-  BrowserWindow,
-  shell,
-  ipcMain
-} from 'electron';
-import path from 'path';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
+import path from 'path';
 
 const isDev = !app.isPackaged;
 

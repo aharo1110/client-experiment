@@ -1,6 +1,5 @@
-import { InputGroup } from '@blueprintjs/core';
 import styled from '@emotion/styled';
-import React, { KeyboardEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 type Props = {
   initialUrl: string;
