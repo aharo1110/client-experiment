@@ -7,24 +7,16 @@ import {
   Interpreter,
   ProcessRuntime,
   responseMessage,
+  resource,
 } from '@unternet/kernel';
 import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { protocols } from './protocols';
-import resources from './resources';
-
 import cors from 'cors';
 import MarkdownIt from 'markdown-it';
 
-const model = openai('gpt-4o-mini');
-const interpreter = new Interpreter({
-  model,
-  resources,
-});
-const runtime = new ProcessRuntime(protocols);
-
-const app = express();
+const app = express(); 
 const md = new MarkdownIt({
   html: false,
   linkify: true,
@@ -38,6 +30,22 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 
 let messages: any[] = [];
 let urls: string[] = [];
+let applet_urls: string[] = ["https://applets.unternet.co/calculator"];
+
+function assembleResources(urls: string[]) {
+    const resources = urls.map(url => resource({ uri: url }));
+    return resources;
+}
+
+let combinedUrls = Array.from(new Set([...urls, ...applet_urls]));
+let resources = assembleResources(combinedUrls);
+
+const model = openai('gpt-4o-mini');
+const interpreter = new Interpreter({
+    model, 
+    resources, 
+}); 
+const runtime = new ProcessRuntime(protocols);
 
 app.use((req, res, next) => {
   res.locals.md = md;
@@ -62,6 +70,9 @@ app.post('/urls', (req, res) => {
   if (Array.isArray(newUrls)) {
     urls = newUrls;
     res.json({ success: true });
+    combinedUrls = Array.from(new Set([...urls, ...applet_urls]));
+    resources = assembleResources(combinedUrls);
+    interpreter.updateResources(resources);
   } else {
     res.status(400).json({ error: 'Invalid URLs' });
   }
