@@ -32,7 +32,7 @@ function App() {
       await new Promise((resolve) => setTimeout(resolve, 0));
       windowManager.current.addToTopRight(
         'Chat',
-        <HeadlessWindow initialUrl={CHAT_URL} />
+        <HeadlessWindow initialUrl={CHAT_URL} onNewWindow={handleNewWindow}/>
       );
     }
     if (needsInit.current && windowManager.current) {
@@ -47,6 +47,13 @@ function App() {
       <WebviewWindow initialUrl={NEW_WINDOW_URL} />
     );
   };
+
+  const handleNewWindow = (url: string) => {
+      windowManager.current?.addToTopRight(
+        url,
+        <WebviewWindow initialUrl={url} />
+      );
+    };
 
   return (
     <UrlsProvider>
