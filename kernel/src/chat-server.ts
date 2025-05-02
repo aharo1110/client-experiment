@@ -33,7 +33,7 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 
 let messages: any[] = [];
 let urls: string[] = [];
-let applet_urls: string[] = [" ", ""];
+let applet_urls: string[] = ["https://applets.unternet.co/calculator"];
 
 function assembleResources(urls: string[]) {
     const resources = urls.map(url => resource({ uri: url }));
