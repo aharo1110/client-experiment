@@ -13,7 +13,7 @@ import { useUrls, UrlsProvider } from './contexts/UrlsContext';
 import { UrlSync } from './components/UrlSync';
 
 export const CHAT_URL = "http://localhost:3001";
-const HOMEPAGE_URL = "http://csumb.edu";
+export const HOMEPAGE_URL = "http://csumb.edu";
 const NEW_WINDOW_URL = "http://github.com";
 
 function App() {
@@ -51,7 +51,8 @@ function App() {
   return (
     <UrlsProvider>
       <div className="app-header bp5-dark">
-        <Button onClick={onClickAddWindow} text="Add window" />
+        <Button onClick={onClickAddWindow} text="Add window"
+         style={{fontFamily: "'Segoe UI', system-ui, sans-serif"}} />
       </div>
       <WindowManager ref={windowManager} />
       <UrlSync />
