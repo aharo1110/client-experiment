@@ -106,6 +106,7 @@ app.post('/chat', async (req, res) => {
         messages.push(responseMsg);
       } else if (response.type === 'actionproposal') {
         const actionMsg = await createActionMessage(response);
+        console.log("Action proposal:", actionMsg);
         messages.push(actionMsg);
       } else {
         console.error('ERROR! on response type');
