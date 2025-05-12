@@ -7,10 +7,8 @@ type Props = {
 };
 
 export function HeadlessWindow({ initialUrl, onNewWindow }: Props) {
-  const webviewRef = React.useRef<HTMLWebViewElement>(null);
-
-  const [url, setUrl] = useState(initialUrl);
-  const [chatUrl, setChatUrl] = useState(initialUrl);
+  const webviewRef = React.useRef<Electron.WebviewTag>(null);
+  const [url] = useState(initialUrl);
 
   // Prevent webview from interfering with resizing.
   useEffect(() => {
@@ -31,28 +29,26 @@ export function HeadlessWindow({ initialUrl, onNewWindow }: Props) {
 
   useEffect(() => {
     const webview = webviewRef.current;
-    if (!webview) return;
+    if (!webview) {
+      return;
+    }
 
     const handleWillNavigate = (e: any) => {
       // If the new URL is different from the current URL, prevent navigation.
       if (e.url !== url) {
         e.preventDefault();
-        if (onNewWindow) {
-          onNewWindow(e.url);
-        }
+
+        onNewWindow?.(e.url);
         webview.stop();
-        setUrl(chatUrl);
       }
     };
 
     // Also listen for any attempts to open a new window.
     const handleNewWindow = (e: any) => {
       e.preventDefault();
-      if (onNewWindow) {
-        onNewWindow(e.url);
-      }
+
+      onNewWindow?.(e.url);
       webview.stop();
-      setUrl(chatUrl);
     };
 
     webview.addEventListener('will-navigate', handleWillNavigate);
