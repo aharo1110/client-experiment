@@ -12,4 +12,4 @@ For now as this gets developed, do the following
 3. Run `npm run build` and `npm run dev`
 
 > [!NOTE]
-> The kernel is not yet integrated with the Web Applets SDK. The chat is functional and links opened will open new windows but it cannot yet read any site contents, nor can it connect with applets.
+> Web Applets integration is still a work-in-progress. The chat is functional and links opened will open new windows but it cannot yet read any site contents, nor can it connect with applets.
