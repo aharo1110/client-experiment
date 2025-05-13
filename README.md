@@ -1,5 +1,5 @@
 # client-experiment
-Experimental web applets client for Capstone project using Electron, React, and the Unternet kernel.
+Experimental web applets client for Capstone project using Electron, React, and [Unternet's](https://unternet.co/) [intelligent kernel](https://github.com/unternet-co/client/tree/main/kernel).
 
 ![Example usecase of the client](.assets/client-image.png)
 
