@@ -20,11 +20,7 @@ export function ChatWindow() {
 
   // Add sample messages on mount
   useEffect(() => {
-    messageHistory.length === 0 &&
-      setMessageHistory([
-        inputMessage({ text: 'Hello!' }),
-        responseMessage({ text: 'Hi! How can I help you?' }),
-      ]);
+    messageHistory.length === 0
   }, []);
 
   const chat = useChat();
