@@ -6,15 +6,15 @@ import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 import 'react-mosaic-component/react-mosaic-component.css';
 import 'react-mosaic-component/styles/index.less';
 import './App.less';
-import { UrlSync } from './components/UrlSync';
 import { WindowManager, WindowManagerHandle } from './components/WindowManager';
-import { HeadlessWindow } from './components/windows/HeadlessWindow';
+import { ChatWindow } from './components/windows/ChatWindow';
 import { WebviewWindow } from './components/windows/WebviewWindow';
-import { UrlsProvider } from './contexts/UrlsContext';
+import { ChatContextProvider } from './hooks/useChat';
+import { urlNormalize } from './util/urlUtils';
 
 export const CHAT_URL = 'http://localhost:3001';
-export const HOMEPAGE_URL = 'http://csumb.edu';
-const NEW_WINDOW_URL = 'http://github.com';
+export const HOMEPAGE_URL = urlNormalize('repl.it');
+const NEW_WINDOW_URL = urlNormalize('applets.unternet.co/maps');
 
 function App() {
   const windowManager = useRef<WindowManagerHandle>(null);
@@ -30,10 +30,7 @@ function App() {
         <WebviewWindow initialUrl={HOMEPAGE_URL} />
       );
       await new Promise((resolve) => setTimeout(resolve, 0));
-      windowManager.current.addToTopRight(
-        'Chat',
-        <HeadlessWindow initialUrl={CHAT_URL} onNewWindow={handleNewWindow}/>
-      );
+      windowManager.current.addToTopRight('Chat', <ChatWindow />);
     }
     if (needsInit.current && windowManager.current) {
       initWindows();
@@ -41,22 +38,17 @@ function App() {
     }
   }, [windowManager, needsInit]);
 
-  const onClickAddWindow = () => {
-    windowManager.current.addToTopRight(
-      NEW_WINDOW_URL,
-      <WebviewWindow initialUrl={NEW_WINDOW_URL} />
+  const handleNewWindow = (url: string) => {
+    windowManager.current?.addToTopRight(
+      url,
+      <WebviewWindow initialUrl={url} />
     );
   };
 
-  const handleNewWindow = (url: string) => {
-      windowManager.current?.addToTopRight(
-        url,
-        <WebviewWindow initialUrl={url} />
-      );
-    };
+  const onClickAddWindow = () => handleNewWindow(NEW_WINDOW_URL);
 
   return (
-    <UrlsProvider>
+    <ChatContextProvider>
       <div className="app-header bp5-dark">
         <Button
           onClick={onClickAddWindow}
@@ -65,8 +57,7 @@ function App() {
         />
       </div>
       <WindowManager ref={windowManager} />
-      <UrlSync />
-    </UrlsProvider>
+    </ChatContextProvider>
   );
 }
 

@@ -17,9 +17,9 @@ function createWindow() {
     // vibrancy: 'under-window',
     webPreferences: {
       webviewTag: true,
-      nodeIntegration: false, // is default value after Electron v5
       contextIsolation: true, // protect against prototype pollution
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false,
     },
     // Set icon based on platform
     icon: path.join(
@@ -43,7 +43,6 @@ function createWindow() {
   }
 
   /* Handle links */
-
   win.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url); // Open the URL in the default system browser
     return { action: 'deny' };
@@ -56,31 +55,27 @@ function createWindow() {
   });
 
   /* Handle defocus */
-
-  win.on('blur', () => {
+  win.on('blur', () =>
     win.webContents.executeJavaScript(`
       document.body.classList.add('blurred');
-    `);
-  });
+    `)
+  );
 
-  win.on('focus', () => {
+  win.on('focus', () =>
     win.webContents.executeJavaScript(`
       document.body.classList.remove('blurred');
-    `);
-  });
+    `)
+  );
 
   /* Handle fullscreen */
-
-  win.on('enter-full-screen', () => {
-    win.webContents.send('window:enter-fullscreen');
-  });
-
-  win.on('leave-full-screen', () => {
-    win.webContents.send('window:leave-fullscreen');
-  });
+  win.on('enter-full-screen', () =>
+    win.webContents.send('window:enter-fullscreen')
+  );
+  win.on('leave-full-screen', () =>
+    win.webContents.send('window:leave-fullscreen')
+  );
 
   /* Load web content */
-
   console.log('Dev mode: ', isDev);
   if (isDev) {
     win.loadURL('http://localhost:5173');
@@ -106,28 +101,6 @@ ipcMain.handle('isFullScreen', (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   return win ? win.isFullScreen() : false;
 });
-
-// ipcMain.on('request-applets', async (event) => {
-//   const appletsPath = app.getPath('userData') + '/applets';
-
-//   if (!fs.existsSync(appletsPath)) {
-//     fs.mkdirSync(appletsPath, { recursive: true });
-//     console.log(`Folder created: ${appletsPath}`);
-//   }
-
-//   const filenames = await fs.readdirSync(appletsPath);
-//   const appletData = [];
-
-//   for (let filename of filenames) {
-//     const fileData = await fs.readFileSync(
-//       `${appletsPath}/${filename}`,
-//       'utf8'
-//     );
-//     appletData.push(fileData);
-//   }
-//   console.log(appletData);
-//   mainWindow.webContents.send('applets', appletData);
-// });
 
 app.on('ready', () => {
   createWindow();
