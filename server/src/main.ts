@@ -26,7 +26,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: 'http://localhost:5173' }));
 
 const model = openai('gpt-4o-mini');
-const interpreter = new Interpreter({ model });
+const interpreter = new Interpreter({
+  model,
+  hint: `
+  If asked to 'do' something, ALWAYS respond with an action.
+  NEVER generate a direct response unless the user is directly asking a question.
+  If not explicitly generating an action, respond with human-readable markdown.
+  Never try to change the state directly.`,
+});
 
 app.use((_req, res, next) => {
   res.locals.md = md;
