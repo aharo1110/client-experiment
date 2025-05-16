@@ -2,7 +2,7 @@ import { Button, InputGroup } from '@blueprintjs/core';
 import styled from '@emotion/styled';
 import { inputMessage, KernelMessage, responseMessage } from '@unternet/kernel';
 import MarkdownIt from 'markdown-it';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useChat } from '../../hooks/useChat';
 
 const md = new MarkdownIt({
@@ -12,10 +12,8 @@ const md = new MarkdownIt({
 });
 
 export function ChatWindow() {
-  const [input, setInput] = React.useState('');
-  const [messageHistory, setMessageHistory] = React.useState<KernelMessage[]>(
-    []
-  );
+  const [input, setInput] = useState('');
+  const [messageHistory, setMessageHistory] = useState<KernelMessage[]>([]);
 
   // Add sample messages on mount
   useEffect(() => {
