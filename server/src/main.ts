@@ -59,12 +59,8 @@ app.post('/interpret', async (req, res) => {
   console.log('Received messages:', JSON.stringify(messages, null, 2));
 
   // Call interpreter with new resources.
-  console.log('1');
   interpreter.updateResources(resources);
-  console.log('2');
   const responses = interpreter.run(messages);
-
-  console.log('3');
 
   // Process response(s). Not clear if there can actually be multiple.
   const results: Interpret.Response = [];
