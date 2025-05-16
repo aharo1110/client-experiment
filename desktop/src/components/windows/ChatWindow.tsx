@@ -36,20 +36,20 @@ export function ChatWindow() {
     setInput('');
 
     // Send message(s) to interpreter
-    const resolved = await chat.resolve([
+    const result = await chat.processMessages([
       ...messageHistory,
       inputMessage({
         text: input,
       }),
     ]);
 
-    if (resolved == null) {
+    if (result == null) {
       console.error('No response from interpreter');
       return;
     }
 
     // Add resolved message to history
-    setMessageHistory((prev) => [...prev, resolved]);
+    setMessageHistory((prev) => [...prev, result]);
   }, [input, messageHistory]);
 
   const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -62,14 +62,17 @@ export function ChatWindow() {
   return (
     <Container>
       <ChatContainer>
-        {messageHistory
-          .slice()
-          .reverse()
-          .map((msg, idx) => (
-            <ChatMessage key={idx} message={msg} />
-          ))}
+        <ChatContainerInner>
+          {messageHistory
+            .slice()
+            .reverse()
+            .map((msg, idx) => (
+              <ChatMessage key={idx} message={msg} />
+            ))}
+        </ChatContainerInner>
+        <div style={{ flex: 1, minHeight: 12 }} />
       </ChatContainer>
-      <div style={{ flex: 1, minHeight: 12 }} />
+
       <ControlsContainer>
         <ChatInputGroup
           value={input}
@@ -82,6 +85,36 @@ export function ChatWindow() {
     </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px;
+
+  font-family: monospace;
+`;
+
+const ChatContainer = styled.div`
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: scroll;
+`;
+
+const ChatContainerInner = styled.div`
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+`;
+
+const ControlsContainer = styled.div`
+  gap: 8px;
+  display: flex;
+`;
+
+const ChatInputGroup = styled(InputGroup)`
+  flex: 1;
+`;
 
 type ChatMessageProps = {
   message: KernelMessage;
@@ -121,29 +154,4 @@ const ChatMessageContainer = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   display: flex;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 12px;
-
-  font-family: monospace;
-`;
-
-const ChatContainer = styled.div`
-  display: flex;
-  flex-direction: column-reverse;
-  overflow: scroll;
-  gap: 8px;
-`;
-
-const ControlsContainer = styled.div`
-  gap: 8px;
-  display: flex;
-`;
-
-const ChatInputGroup = styled(InputGroup)`
-  flex: 1;
 `;
