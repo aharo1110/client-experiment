@@ -17,12 +17,13 @@ export function ChatWindow() {
     []
   );
 
+  // Add sample messages on mount
   useEffect(() => {
-    setMessageHistory([
-      ...messageHistory,
-      inputMessage({ text: 'Hello!' }),
-      responseMessage({ text: 'Hi! How can I help you?' }),
-    ]);
+    messageHistory.length === 0 &&
+      setMessageHistory([
+        inputMessage({ text: 'Hello!' }),
+        responseMessage({ text: 'Hi! How can I help you?' }),
+      ]);
   }, []);
 
   const chat = useChat();
@@ -51,6 +52,13 @@ export function ChatWindow() {
     setMessageHistory((prev) => [...prev, resolved]);
   }, [input, messageHistory]);
 
+  const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
+      onPressSend();
+    }
+  };
+
   return (
     <Container>
       <ChatContainer>
@@ -66,6 +74,7 @@ export function ChatWindow() {
         <ChatInputGroup
           value={input}
           onValueChange={setInput}
+          onKeyDown={onInputKeyDown}
           placeholder="Chat"
         />
         <Button onClick={onPressSend}>Send</Button>

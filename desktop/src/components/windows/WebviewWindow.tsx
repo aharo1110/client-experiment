@@ -1,7 +1,15 @@
 import { Button, InputGroup } from '@blueprintjs/core';
 import styled from '@emotion/styled';
-import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { HOMEPAGE_URL } from '../../App';
+import { useChat } from '../../hooks/useChat';
+import { urlNormalize, urlStrip } from '../../util/urlUtils';
 
 type Props = {
   initialUrl: string;
@@ -9,98 +17,100 @@ type Props = {
   onUrlChange?: (newUrl: string) => void;
 };
 
-type Favorite = {
-  title: string;
-  url: string;
-};
-
 export function WebviewWindow({
   initialUrl,
   onTitleChange,
   onUrlChange,
 }: Props) {
-  const webviewRef = useRef<Electron.WebviewTag | null>(null);
-  const inputValueRef = useRef<string>(initialUrl);
-  const [inputValue, setInputValue] = useState(initialUrl);
   const [url, setUrl] = useState(initialUrl);
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(false);
+  const [inputUrl, setInputUrl] = useState(initialUrl);
 
-  const normalizeUrl = (raw: string): string => {
-    try {
-      const url = new URL(raw);
-      return url.href;
-    } catch {
-      return `https://${raw}`;
-    }
-  };
+  const [historyIndex, setHistoryIndex] = useState(0);
+  const [historyStack, setHistoryStack] = useState<string[]>([initialUrl]);
 
-  const handleBack = () =>
-    webviewRef.current?.canGoBack() && webviewRef.current.goBack();
-  const handleForward = () =>
-    webviewRef.current?.canGoForward() && webviewRef.current.goForward();
-  const handleReload = () => webviewRef.current?.reload();
-  const handleHome = () => setUrl(HOMEPAGE_URL);
+  const frameRef = useRef<HTMLIFrameElement>(null);
+
+  const chat = useChat();
+
+  // URL change handler (also runs on mount)
+  useEffect(() => {
+    // Update input box
+    setInputUrl(url);
+
+    // Invoke callback
+    onUrlChange?.(url);
+
+    // Just use the url as the title
+    onTitleChange?.(urlStrip(url));
+
+    (async () => {
+      // Register iframe with chat
+      if (frameRef.current) {
+        await chat.connect(frameRef.current.contentWindow, new URL(url));
+      }
+    })();
+  }, [url, frameRef.current]);
 
   const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const value = normalizeUrl(inputValueRef.current || '');
-      setUrl(value);
-      setInputValue(value);
-      (e.target as HTMLInputElement).blur();
+      navigateTo(urlNormalize(inputUrl));
     }
   };
 
   useEffect(() => {
-    const webview = webviewRef.current;
-    const start = () => webview?.classList.add('disable-pointer-events');
-    const end = () => webview?.classList.remove('disable-pointer-events');
+    const frame = frameRef.current;
+    const onMouseDown = () => frame?.classList.add('disable-pointer-events');
+    const onMouseUp = () => frame?.classList.remove('disable-pointer-events');
 
-    window.addEventListener('mousedown', start);
-    window.addEventListener('mouseup', end);
+    window.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mouseup', onMouseUp);
     return () => {
-      window.removeEventListener('mousedown', start);
-      window.removeEventListener('mouseup', end);
+      window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mouseup', onMouseUp);
     };
   }, []);
 
-  useEffect(() => {
-    const webview = webviewRef.current;
-    if (!webview) return;
+  const navigateTo = (newUrl: string) => {
+    // Ignore navigation to same URL
+    if (newUrl == url) {
+      return;
+    }
 
-    const handleTitle = (e: any) => {
-      if (onTitleChange) onTitleChange(e.title);
-    };
+    // Perform "navigation" (update history)
+    // Erase history ahead (if applicable)
+    if (historyIndex !== historyStack.length - 1) {
+      setHistoryStack((prev) => prev.slice(0, historyIndex + 1));
+    }
 
-    webview.addEventListener('page-title-updated', handleTitle);
-    return () => {
-      webview.removeEventListener('page-title-updated', handleTitle);
-    };
-  }, [onTitleChange]);
+    // Add the new URL to history
+    setHistoryStack((prev) => [...prev, newUrl]);
+    setHistoryIndex((prev) => prev + 1);
 
-  useEffect(() => {
-    const updateNavState = () => {
-      if (webviewRef.current) {
-        setCanGoBack(webviewRef.current.canGoToOffset(-1));
-        setCanGoForward(webviewRef.current.canGoToOffset(1));
-      }
-    };
+    // Apply the URL change
+    setUrl(newUrl);
+  };
 
-    const webview = webviewRef.current;
-    if (!webview) return;
-    const handleNav = (e: any) => {
-      setUrl(e.url);
-      setInputValue(e.url);
-      if (onUrlChange) onUrlChange(e.url);
-      // Also update the inputValueRef if needed:
-      inputValueRef.current = e.url;
-      updateNavState();
-    };
-    webview.addEventListener('did-navigate', handleNav);
-    return () => {
-      webview.removeEventListener('did-navigate', handleNav);
-    };
-  }, [onUrlChange]);
+  const handleBack = useCallback(() => {
+    // Update current index
+    const newIndex = historyIndex - 1;
+    setHistoryIndex(newIndex);
+
+    // Apply the URL change
+    setUrl(historyStack[newIndex]);
+  }, [historyStack, historyIndex]);
+
+  const handleForward = useCallback(() => {
+    // Update current index
+    const newIndex = historyIndex + 1;
+    setHistoryIndex(newIndex);
+
+    // Apply the URL change
+    setUrl(historyStack[newIndex]);
+  }, [historyStack, historyIndex]);
+
+  const canGoBack = historyStack.length > 1 && historyIndex > 0;
+  const canGoForward =
+    historyStack.length > 1 && historyIndex < historyStack.length - 1;
 
   return (
     <Container>
@@ -110,32 +120,24 @@ export function WebviewWindow({
             icon="arrow-left"
             onClick={handleBack}
             variant="minimal"
-            disabled={canGoBack ? false : true}
+            disabled={!canGoBack}
           />
           <StyledButton
             icon="arrow-right"
             onClick={handleForward}
             variant="minimal"
-            disabled={canGoForward ? false : true}
+            disabled={!canGoForward}
           />
           <StyledButton
-            icon={webviewRef.current?.isLoading ? 'refresh' : 'stop'}
-            onClick={handleReload}
+            icon="home"
+            onClick={() => navigateTo(HOMEPAGE_URL)}
             variant="minimal"
           />
-          <StyledButton icon="home" onClick={handleHome} variant="minimal" />
         </ButtonGroup>
 
         <StyledInputGroup
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-            inputValueRef.current = e.target.value;
-          }}
-          onBlur={() => {
-            // Optionally, commit on blur if you want.
-            setInputValue(normalizeUrl(inputValueRef.current || ''));
-          }}
+          value={inputUrl}
+          onChange={(e) => setInputUrl(e.target.value)}
           onKeyDown={onInputKeyDown}
           fill
           leftElement={
@@ -145,7 +147,7 @@ export function WebviewWindow({
           }
         />
       </HeaderContainer>
-      <StyledWebview ref={webviewRef} src={url} />
+      <StyledFrame ref={frameRef} src={url} />
     </Container>
   );
 }
@@ -199,7 +201,7 @@ const StyledInputGroup = styled(InputGroup)`
   }
 `;
 
-const StyledWebview = styled('webview')`
+const StyledFrame = styled.iframe`
   flex-grow: 1;
   border: none;
   background-color: #ffffff;

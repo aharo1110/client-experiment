@@ -8,7 +8,7 @@ import 'react-mosaic-component/styles/index.less';
 import './App.less';
 import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 import { ChatWindow } from './components/windows/ChatWindow';
-import { WebviewWindow2 } from './components/windows/WebviewWindow2';
+import { WebviewWindow } from './components/windows/WebviewWindow';
 import { ChatContextProvider } from './hooks/useChat';
 
 export const CHAT_URL = 'http://localhost:3001';
@@ -26,13 +26,9 @@ function App() {
       }
       windowManager.current.addToTopRight(
         HOMEPAGE_URL,
-        <WebviewWindow2 initialUrl={HOMEPAGE_URL} />
+        <WebviewWindow initialUrl={HOMEPAGE_URL} />
       );
       await new Promise((resolve) => setTimeout(resolve, 0));
-      // windowManager.current.addToTopRight(
-      //   'Chat',
-      //   <HeadlessWindow initialUrl={CHAT_URL} onNewWindow={handleNewWindow} />
-      // );
       windowManager.current.addToTopRight('Chat', <ChatWindow />);
     }
     if (needsInit.current && windowManager.current) {
@@ -44,7 +40,7 @@ function App() {
   const handleNewWindow = (url: string) => {
     windowManager.current?.addToTopRight(
       url,
-      <WebviewWindow2 initialUrl={url} />
+      <WebviewWindow initialUrl={url} />
     );
   };
 
