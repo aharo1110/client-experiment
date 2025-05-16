@@ -29,10 +29,10 @@ const model = openai('gpt-4o-mini');
 const interpreter = new Interpreter({
   model,
   hint: `
-  If asked to 'do' something, ALWAYS respond with an action.
-  NEVER generate a direct response unless the user is directly asking a question.
-  If not explicitly generating an action, respond with human-readable markdown.
-  Never try to change the state directly.`,
+  If asked to 'do' something, ALWAYS respond with an action proposal - NEVER just a direct response.
+  Direct/normal responses (not action proposals) are USER FACING, and ALWAYS in the style of a chat.
+  Direct/normal should NEVER talk about "actions" or "action proposals" explicitly.
+  `,
 });
 
 app.use((_req, res, next) => {
@@ -67,11 +67,14 @@ app.post('/interpret', async (req, res) => {
 
   // Call interpreter with new resources.
   interpreter.updateResources(resources);
-  const responses = interpreter.run(messages);
+  const runner = interpreter.run(messages);
 
   // Process response(s). Not clear if there can actually be multiple.
   const results: Interpret.Response = [];
-  for await (const response of responses) {
+
+  let it = await runner.next();
+  while (!it.done && it.value) {
+    const response = it.value;
     if (response.type === 'direct') {
       let contentString = '';
       for await (const part of response.contentStream) {
@@ -89,9 +92,7 @@ app.post('/interpret', async (req, res) => {
       });
     }
 
-    // TODO: We don't actually want to break here. Update when we know why
-    // the generator isn't returning.
-    break;
+    it = await runner.next([...messages, ...results]);
   }
 
   res.json(results);
