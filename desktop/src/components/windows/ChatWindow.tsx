@@ -4,6 +4,7 @@ import { inputMessage, KernelMessage, responseMessage } from '@unternet/kernel';
 import MarkdownIt from 'markdown-it';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useChat } from '../../hooks/useChat';
+import './ChatWindow.less';
 
 const md = new MarkdownIt({
   html: false,
@@ -17,11 +18,7 @@ export function ChatWindow() {
 
   // Add sample messages on mount
   useEffect(() => {
-    messageHistory.length === 0 &&
-      setMessageHistory([
-        inputMessage({ text: 'Hello!' }),
-        responseMessage({ text: 'Hi! How can I help you?' }),
-      ]);
+    messageHistory.length === 0
   }, []);
 
   const chat = useChat();
@@ -76,7 +73,7 @@ export function ChatWindow() {
           value={input}
           onValueChange={setInput}
           onKeyDown={onInputKeyDown}
-          placeholder="Chat"
+          placeholder="Type a message..."
         />
         <Button onClick={onPressSend}>Send</Button>
       </ControlsContainer>
@@ -88,26 +85,34 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 12px;
-
+  padding: 0;
   font-family: monospace;
+  background-color: #ffffff;
 `;
 
 const ChatContainer = styled.div`
   flex: 1;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
+  margin: auto;
+  width: 100%;
+  max-width: 620px;
 `;
 
 const ChatContainerInner = styled.div`
   display: flex;
   flex-direction: column-reverse;
-  gap: 8px;
+  gap: 0px;
+  padding: 0 10px;
 `;
 
 const ControlsContainer = styled.div`
-  gap: 8px;
+  gap: 10px;
   display: flex;
+  padding: 10px;
+  margin: auto;
+  width: 100%;
+  max-width: 620px;
 `;
 
 const ChatInputGroup = styled(InputGroup)`
@@ -134,11 +139,10 @@ function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <ChatMessageContainer
-      style={{
-        alignSelf: message.type === 'input' ? 'flex-end' : 'flex-start',
-      }}
+      className={
+        message.type === 'input' ? 'bp5-card message user-message' : 'bp5-card message'
+      }
     >
-      <h4>{message.type === 'input' ? 'User' : 'Chat'}</h4>
       <div dangerouslySetInnerHTML={{ __html: md.render(message.text) }} />
     </ChatMessageContainer>
   );
@@ -147,10 +151,7 @@ function ChatMessage({ message }: ChatMessageProps) {
 const ChatMessageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
   padding: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  display: flex;
-  max-width: 100%;
+  width: 100%;
 `;
