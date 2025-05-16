@@ -2,7 +2,7 @@
     "name": "magic-test-kernel",
     "version": "0.1.0",
     "scripts": {
-        "dev": "tsx src/chat-server.ts"
+        "dev": "tsx watch src/main.ts"
     },
     "dependencies": {
         "@ai-sdk/anthropic": "^1.2.10",

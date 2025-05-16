@@ -1,4 +1,4 @@
-import { Button, InputGroup, Menu, MenuItem } from '@blueprintjs/core';
+import { Button, InputGroup } from '@blueprintjs/core';
 import styled from '@emotion/styled';
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { HOMEPAGE_URL } from '../../App';
@@ -21,11 +21,8 @@ export function WebviewWindow({
 }: Props) {
   const webviewRef = useRef<Electron.WebviewTag | null>(null);
   const inputValueRef = useRef<string>(initialUrl);
-  const [url, setUrl] = useState(initialUrl);
   const [inputValue, setInputValue] = useState(initialUrl);
-  const [darkMode, setDarkMode] = useState(false);
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const [currentTitle, setCurrentTitle] = useState<string>('Untitled');
+  const [url, setUrl] = useState(initialUrl);
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
 
@@ -36,16 +33,6 @@ export function WebviewWindow({
     } catch {
       return `https://${raw}`;
     }
-  };
-
-  const isFavorited = favorites.some((fav) => fav.url === url);
-
-  const toggleFavorite = () => {
-    setFavorites((prev) =>
-      isFavorited
-        ? prev.filter((fav) => fav.url !== url)
-        : [...prev, { url, title: currentTitle }]
-    );
   };
 
   const handleBack = () =>
@@ -82,7 +69,6 @@ export function WebviewWindow({
     if (!webview) return;
 
     const handleTitle = (e: any) => {
-      setCurrentTitle(e.title);
       if (onTitleChange) onTitleChange(e.title);
     };
 
@@ -117,8 +103,8 @@ export function WebviewWindow({
   }, [onUrlChange]);
 
   return (
-    <Container darkMode={darkMode}>
-      <HeaderContainer darkMode={darkMode}>
+    <Container>
+      <HeaderContainer>
         <ButtonGroup>
           <StyledButton
             icon="arrow-left"
@@ -138,42 +124,6 @@ export function WebviewWindow({
             variant="minimal"
           />
           <StyledButton icon="home" onClick={handleHome} variant="minimal" />
-          {/*<StyledButton
-                icon={darkMode ? 'flash' : 'moon'}
-                onClick={() => setDarkMode(!darkMode)}
-                title="Toggle dark mode"
-                variant="minimal"
-            />
-            <StyledButton
-                icon={isFavorited ? 'star' : 'star-empty'}
-                onClick={toggleFavorite}
-                intent={isFavorited ? 'warning' : 'none'}
-                title={isFavorited ? 'Unfavorite' : 'Add to Favorites'}
-                variant="minimal"
-            />
-            <Popover
-                content={
-                  <StyledMenu darkMode={darkMode}>
-                    {favorites.length === 0 ? (
-                        <MenuItem text="No favorites yet" disabled />
-                    ) : (
-                        favorites.map((fav) => (
-                            <StyledMenuItem
-                                key={fav.url}
-                                text={fav.title}
-                                label={fav.url}
-                                icon="link"
-                                onClick={() => setUrl(fav.url)}
-                                darkMode={darkMode}
-                            />
-                        ))
-                    )}
-                  </StyledMenu>
-                }
-                position="bottom"
-            >
-              <StyledButton icon="bookmark" title="View favorites" variant="minimal"/>
-            </Popover>*/}
         </ButtonGroup>
 
         <StyledInputGroup
@@ -188,7 +138,6 @@ export function WebviewWindow({
           }}
           onKeyDown={onInputKeyDown}
           fill
-          darkMode={darkMode}
           leftElement={
             <Favicon
               src={`https://www.google.com/s2/favicons?sz=32&domain_url=${url}`}
@@ -196,24 +145,24 @@ export function WebviewWindow({
           }
         />
       </HeaderContainer>
-      <StyledWebview ref={webviewRef} src={url} darkMode={darkMode} />
+      <StyledWebview ref={webviewRef} src={url} />
     </Container>
   );
 }
 
 // Styled Components
-const Container = styled.div<{ darkMode: boolean }>`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: ${({ darkMode }) => (darkMode ? '#1e1e1e' : '#ffffff')};
+  background-color: #ffffff;
 `;
 
-const HeaderContainer = styled.div<{ darkMode: boolean }>`
+const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: ${({ darkMode }) => (darkMode ? '#2b2f36' : '#e4e4e4')};
+  background-color: #e4e4e4;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 `;
 
@@ -237,55 +186,25 @@ const Favicon = styled.img`
   border-radius: 4px;
 `;
 
-const StyledInputGroup = styled(InputGroup, {
-  shouldForwardProp: (prop) => prop !== 'darkMode',
-})<{ darkMode: boolean }>`
+const StyledInputGroup = styled(InputGroup)`
   flex-grow: 1;
 
   input {
     border-radius: 0;
-    background-color: ${({ darkMode }) => (darkMode ? '#1f1f1f' : '#fff')};
-    color: ${({ darkMode }) => (darkMode ? '#f5f5f5' : '#111')};
-    border: 1px solid ${({ darkMode }) => (darkMode ? '#444' : '#ccc')};
+    background-color: #fff;
+    color: #111;
+    border: 1px solid #ccc;
     padding: 8px;
     font-family: 'Segoe UI', system-ui, sans-serif;
   }
 `;
 
-const StyledWebview = styled('webview')<{ darkMode: boolean }>`
+const StyledWebview = styled('webview')`
   flex-grow: 1;
   border: none;
-  background-color: ${({ darkMode }) => (darkMode ? '#121212' : '#ffffff')};
+  background-color: #ffffff;
 
   &.disable-pointer-events {
     pointer-events: none;
-  }
-`;
-
-const StyledMenu = styled(Menu)<{ darkMode: boolean }>`
-  background-color: ${({ darkMode }) => (darkMode ? '#2a2a2a' : '#fff')};
-  color: ${({ darkMode }) => (darkMode ? '#f0f0f0' : '#111')};
-  min-width: 300px;
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid ${({ darkMode }) => (darkMode ? '#444' : '#ccc')};
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-`;
-
-const StyledMenuItem = styled(MenuItem)<{ darkMode: boolean }>`
-  font-size: 13px;
-  padding: 6px 12px;
-
-  &:hover {
-    background-color: ${({ darkMode }) => (darkMode ? '#393939' : '#f2f2f2')};
-  }
-
-  .bp5-icon {
-    margin-right: 8px;
-  }
-
-  .bp5-menu-item-label {
-    color: ${({ darkMode }) => (darkMode ? '#bbb' : '#666')};
-    font-size: 11px;
   }
 `;

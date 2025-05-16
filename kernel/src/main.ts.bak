@@ -1,0 +1,141 @@
+import { openai } from '@ai-sdk/openai';
+import {
+  actionMessage,
+  ActionProposalResponse,
+  DirectResponse,
+  inputMessage,
+  Interpreter,
+  KernelMessage,
+  ProcessRuntime,
+  Resource,
+  resource,
+  responseMessage,
+} from '@unternet/kernel';
+import { Applet } from '@web-applets/sdk';
+import cors from 'cors';
+import 'dotenv/config';
+import express from 'express';
+import MarkdownIt from 'markdown-it';
+import path from 'path';
+import { httpsProtocol } from './protocols/HttpsProtocol';
+
+const app = express();
+const md = new MarkdownIt({
+  html: false,
+  linkify: true,
+  typographer: true,
+});
+
+app.use(express.json());
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors({ origin: 'http://localhost:5173' }));
+
+let messageHistory: KernelMessage[] = [];
+let urls: string[] = [];
+let applet_urls: string[] = ['https://applets.unternet.co/calculator'];
+
+const appletInstances: Record<string, Applet> = {};
+
+function assembleResources(urls: string[]) {
+  const resources = urls.map((url) => resource({ uri: url }));
+  return resources;
+}
+
+let combinedUrls = Array.from(new Set([...urls, ...applet_urls]));
+let resources = assembleResources(combinedUrls);
+
+const model = openai('gpt-4o-mini');
+const interpreter = new Interpreter({
+  model,
+  resources,
+});
+const runtime = new ProcessRuntime([httpsProtocol]);
+
+app.use((req, res, next) => {
+  res.locals.md = md;
+  next();
+});
+
+app.use(
+  '/node_modules',
+  express.static(path.join(__dirname, '../../node_modules'))
+);
+
+app.get('/', (req, res) => {
+  res.render('index', { messages: [] });
+});
+
+app.post('/resources', (req, res) => {
+  const resources = req.body.resources as Resource[];
+
+  console.log(`POST /resources:\n${JSON.stringify(resources, null, 2)}`);
+
+  // Send resources to interpreter
+  interpreter.updateResources(resources);
+});
+
+app.get('/chat', (req, res) => {
+  const renderedMessages = messageHistory.map((msg) => ({
+    ...msg,
+    html: msg.type === 'response' ? md.render(msg.text) : 'UNHANDLED',
+  }));
+
+  res.json({ messages: renderedMessages });
+});
+
+app.post('/chat', async (req, res) => {
+  const { user_input: userInput } = req.body;
+
+  // Add user input to history as-is.
+  messageHistory.push(inputMessage({ text: userInput }));
+
+  // Send message history to interpreter.
+  const responses = interpreter.run(messageHistory);
+
+  // Process response(s). Not clear if there can actually be multiple.
+  for await (const response of responses) {
+    console.log(`Got response of type ${response.type}`);
+
+    switch (response.type) {
+      case 'direct':
+        messageHistory.push(await messagefromDirectResponse(response));
+        break;
+      case 'actionproposal':
+        messageHistory.push(await messageFromActionResponse(response));
+        break;
+    }
+  }
+
+  const renderedMessages = messageHistory.map((msg) => ({
+    ...msg,
+    html: msg.type === 'response' ? md.render(msg.text) : 'UNHANDLED',
+  }));
+
+  res.json({ messages: renderedMessages });
+});
+
+async function messagefromDirectResponse(response: DirectResponse) {
+  let total_text = '';
+  for await (const part of response.contentStream) {
+    total_text += part;
+  }
+
+  return responseMessage({ text: total_text });
+}
+
+async function messageFromActionResponse(response: ActionProposalResponse) {
+  const content = await runtime.dispatch(response);
+  return actionMessage({
+    uri: response.uri,
+    actionId: response.actionId,
+    args: response.args,
+    content,
+  });
+}
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Kernel chat server running on http://localhost:${PORT}`);
+});

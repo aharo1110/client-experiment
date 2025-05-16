@@ -3,7 +3,6 @@ import React, {
   forwardRef,
   ReactNode,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
@@ -23,7 +22,6 @@ import {
 } from 'react-mosaic-component';
 import { MosaicKey } from 'react-mosaic-component/lib/types';
 import 'react-mosaic-component/react-mosaic-component.css';
-import { useUrls } from '../contexts/UrlsContext';
 
 export type WindowManagerHandle = {
   addToTopRight: (title: string, content: ReactNode) => void;
@@ -40,7 +38,6 @@ type WindowData = {
 export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   const [windows, setWindows] = useState<Record<number, WindowData>>({});
   const [layout, setLayout] = useState<MosaicNode<number> | null>(null);
-  const { setUrls } = useUrls();
 
   const [windowIdCounter, setWindowIdCounter] = useState(1);
 
@@ -59,13 +56,13 @@ export const WindowManager = forwardRef<WindowManagerHandle>((_, ref) => {
   }, []);
 
   // Whenever windows change, update the global URL list.
-  useEffect(() => {
-    const globalUrls = Object.values(windows)
-      .map((win) => win.url)
-      .filter((url): url is string => !!url);
-    console.log('Updating global URLs:', globalUrls);
-    setUrls(globalUrls);
-  }, [windows, setUrls]);
+  // useEffect(() => {
+  //   const globalUrls = Object.values(windows)
+  //     .map((win) => win.url)
+  //     .filter((url): url is string => !!url);
+  //   console.log('Updating global URLs:', globalUrls);
+  //   setUrls(globalUrls);
+  // }, [windows, setUrls]);
 
   const addToTopRight = useCallback(
     (title: string, content: ReactNode) => {
