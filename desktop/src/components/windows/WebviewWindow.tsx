@@ -112,6 +112,13 @@ export function WebviewWindow({
   const canGoForward =
     historyStack.length > 1 && historyIndex < historyStack.length - 1;
 
+  const handleReload = () => {
+    // Reload the current URL
+    if (frameRef.current) {
+      frameRef.current.src = frameRef.current.src;
+    }
+  }
+
   return (
     <Container>
       <HeaderContainer>
@@ -127,6 +134,11 @@ export function WebviewWindow({
             onClick={handleForward}
             variant="minimal"
             disabled={!canGoForward}
+          />
+          <StyledButton
+            icon="repeat"
+            onClick={handleReload}
+            variant="minimal"
           />
           <StyledButton
             icon="home"
