@@ -14,7 +14,7 @@ import { urlNormalize } from './util/urlUtils';
 
 export const CHAT_URL = 'http://localhost:3001';
 export const HOMEPAGE_URL = urlNormalize('repl.it');
-const NEW_WINDOW_URL = urlNormalize('applets.unternet.co/maps');
+const NEW_WINDOW_URL = 'http://localhost:3001/applets';
 
 function App() {
   const windowManager = useRef<WindowManagerHandle>(null);
