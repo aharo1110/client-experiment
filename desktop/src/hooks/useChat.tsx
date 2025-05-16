@@ -27,7 +27,9 @@ namespace Interpret {
 
 type ChatContext = {
   connect: (window: Window, url: URL) => Promise<void>;
-  resolve(messageHistory: KernelMessage[]): Promise<KernelMessage | null>;
+  processMessages(
+    messageHistory: KernelMessage[]
+  ): Promise<KernelMessage | null>;
 };
 
 const ChatContext = createContext<ChatContext | null>(null);
@@ -60,9 +62,9 @@ export function ChatContextProvider({
     [runtime, applets]
   );
 
-  const resolve = useCallback(
+  const processMessages = useCallback(
     async (messageHistory: KernelMessage[]): Promise<KernelMessage | null> => {
-      // TEMP/HACK: Pass current applet states as action messages.
+      // HACK: Pass current applet states as action messages.
       const initMessages = Object.entries(applets).map(([uri, applet]) =>
         actionMessage({
           uri,
@@ -120,9 +122,7 @@ export function ChatContextProvider({
         // Return an ActionMessage. This (probably) won't be rendered in the chat,
         // but we still want it to be fed back into the interpreter.
         return actionMessage({
-          uri: data.uri,
-          actionId: data.actionId,
-          args: data.args,
+          ...data,
           content: applet.data,
         });
       }
@@ -133,7 +133,7 @@ export function ChatContextProvider({
   );
 
   return (
-    <ChatContext.Provider value={{ connect, resolve }}>
+    <ChatContext.Provider value={{ connect, processMessages }}>
       {children}
     </ChatContext.Provider>
   );
