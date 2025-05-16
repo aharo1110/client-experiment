@@ -3,7 +3,6 @@ import {
   type ActionProposalResponse,
   type DirectResponse,
   KernelMessage,
-  ProcessRuntime,
   Resource,
   responseMessage,
 } from '@unternet/kernel';
@@ -38,7 +37,6 @@ export function ChatContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [runtime] = useState(() => new ProcessRuntime([]));
   const [applets] = useState<Record<string, Applet>>({});
 
   const connect = useCallback(
@@ -58,7 +56,7 @@ export function ChatContextProvider({
         console.log(`Couldn't connect to applet at ${url}`);
       }
     },
-    [runtime, applets]
+    [applets]
   );
 
   const processMessages = useCallback(
@@ -132,7 +130,7 @@ export function ChatContextProvider({
 
       return results;
     },
-    [runtime, applets]
+    [applets]
   );
 
   return (
