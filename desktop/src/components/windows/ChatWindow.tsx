@@ -36,20 +36,20 @@ export function ChatWindow() {
     setInput('');
 
     // Send message(s) to interpreter
-    const result = await chat.processMessages([
+    const results = await chat.processMessages([
       ...messageHistory,
       inputMessage({
         text: input,
       }),
     ]);
 
-    if (result == null) {
+    if (!results.length) {
       console.error('No response from interpreter');
       return;
     }
 
     // Add resolved message to history
-    setMessageHistory((prev) => [...prev, result]);
+    setMessageHistory((prev) => [...prev, ...results]);
   }, [input, messageHistory]);
 
   const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
