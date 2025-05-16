@@ -45,11 +45,12 @@ namespace Interpret {
     messages: KernelMessage[];
   };
 
-  export type Response =
+  export type Response = (
     | (Omit<DirectResponse, 'content'> & { content: string })
     | (Omit<ActionProposalResponse, 'args'> & {
         args: string;
-      });
+      })
+  )[];
 }
 
 app.post('/interpret', async (req, res) => {
@@ -58,10 +59,15 @@ app.post('/interpret', async (req, res) => {
   console.log('Received messages:', JSON.stringify(messages, null, 2));
 
   // Call interpreter with new resources.
+  console.log('1');
   interpreter.updateResources(resources);
+  console.log('2');
   const responses = interpreter.run(messages);
 
+  console.log('3');
+
   // Process response(s). Not clear if there can actually be multiple.
+  const results: Interpret.Response = [];
   for await (const response of responses) {
     if (response.type === 'direct') {
       let contentString = '';
@@ -69,17 +75,23 @@ app.post('/interpret', async (req, res) => {
         contentString += part;
       }
 
-      res.json({
+      results.push({
         ...response,
         content: contentString,
       });
     } else if (response.type === 'actionproposal') {
-      res.json({
+      results.push({
         ...response,
-        args: JSON.stringify(response.args),
+        args: JSON.stringify(response.args ?? {}),
       });
     }
+
+    // TODO: We don't actually want to break here. Update when we know why
+    // the generator isn't returning.
+    break;
   }
+
+  res.json(results);
 });
 
 const PORT = process.env.PORT || 3001;
