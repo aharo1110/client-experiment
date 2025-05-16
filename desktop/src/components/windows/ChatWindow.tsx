@@ -154,4 +154,5 @@ const ChatMessageContainer = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   display: flex;
+  max-width: 100%;
 `;
