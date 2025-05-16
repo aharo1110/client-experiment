@@ -54,7 +54,7 @@ export function ChatContextProvider({
         const applet = await appletFactory.connect(window);
         applets[appletId] = applet;
       } catch (e) {
-        console.log(`${url} is (probably) not an applet`);
+        console.log(`Couldn't connect to applet at ${url}`);
       }
     },
     [runtime, applets]
@@ -90,9 +90,12 @@ export function ChatContextProvider({
       });
 
       const data = (await res.json()) as Interpret.Response;
+
+      // Direct response handler
       if (data.type === 'direct') {
         // Return a ResponseMessage
         return responseMessage({ text: data.content });
+        // Action proposal handler
       } else if (data.type === 'actionproposal') {
         // Find applet
         const applet = applets[data.uri];

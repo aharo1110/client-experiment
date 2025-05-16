@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { DidNavigateEvent, PageTitleUpdatedEvent } from 'electron';
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { HOMEPAGE_URL } from '../../App';
-import { useAppletContext } from '../../contexts/AppletContext';
 import { useChat } from '../../hooks/useChat';
 import { urlNormalize, urlStrip } from '../../util/urlUtils';
 
@@ -23,7 +22,6 @@ export function WebviewWindow2({
 
   const frameRef = useRef<HTMLIFrameElement>(null);
 
-  const appletContext = useAppletContext();
   const chat = useChat();
 
   // URL change handler (also runs on mount)
@@ -38,9 +36,7 @@ export function WebviewWindow2({
     onTitleChange?.(urlStrip(url));
 
     (async () => {
-      // Connect applet factory to iframe
-      // await appletContext.connect(frameRef.current.contentWindow, url);
-
+      // Register iframe with chat
       if (frameRef.current) {
         await chat.connect(frameRef.current.contentWindow, new URL(url));
       }
@@ -110,12 +106,6 @@ export function WebviewWindow2({
             // onClick={handleForward}
             variant="minimal"
             // disabled={canGoForward ? false : true}
-          />
-          <StyledButton
-            icon="refresh"
-            // icon={webviewRef.current?.isLoading ? 'refresh' : 'stop'}
-            // onClick={handleReload}
-            variant="minimal"
           />
           <StyledButton
             icon="home"
