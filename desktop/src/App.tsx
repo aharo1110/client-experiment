@@ -10,10 +10,11 @@ import { WindowManager, WindowManagerHandle } from './components/WindowManager';
 import { ChatWindow } from './components/windows/ChatWindow';
 import { WebviewWindow } from './components/windows/WebviewWindow';
 import { ChatContextProvider } from './hooks/useChat';
+import { urlNormalize } from './util/urlUtils';
 
 export const CHAT_URL = 'http://localhost:3001';
-export const HOMEPAGE_URL = 'https://applets.unternet.co/maps';
-const NEW_WINDOW_URL = 'https://applets.unternet.co/crossword';
+export const HOMEPAGE_URL = urlNormalize('repl.it');
+const NEW_WINDOW_URL = urlNormalize('applets.unternet.co/maps');
 
 function App() {
   const windowManager = useRef<WindowManagerHandle>(null);

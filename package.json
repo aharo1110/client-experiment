@@ -1,14 +1,14 @@
 {
   "workspaces": [
-    "kernel",
+    "server",
     "desktop"
   ],
   "main": "desktop/dist/electron/main.js",
   "scripts": {
     "build": "npm run build:desktop",
     "build:desktop": "cd desktop && rimraf dist && cross-env NODE_ENV=production npm run build",
-    "dev": "concurrently \"npm run dev:desktop\" \"npm run dev:kernel\"",
-    "dev:kernel": "cd kernel && npm run dev",
+    "dev": "concurrently \"npm run dev:desktop\" \"npm run dev:server\"",
+    "dev:server": "cd server && npm run dev",
     "dev:desktop": "cd desktop && npm run dev"
   },
   "devDependencies": {
